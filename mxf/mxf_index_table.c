@@ -306,7 +306,7 @@ int mxf_write_index_table_segment(MXFFile *mxfFile, const MXFIndexTableSegment *
     CHK_ORET(mxf_write_local_tl(mxfFile, 0x3f0c, 8));
     CHK_ORET(mxf_write_int64(mxfFile, segment->indexStartPosition));
     CHK_ORET(mxf_write_local_tl(mxfFile, 0x3f0d, 8));
-    CHK_ORET(mxf_write_int64(mxfFile, segment->indexDuration));
+    CHK_ORET(mxf_write_int64(mxfFile, segment->indexEntryArray != NULL || !segment->forceWriteCBEDuration0 ? segment->indexDuration : 0));
     CHK_ORET(mxf_write_local_tl(mxfFile, 0x3f05, 4));
     CHK_ORET(mxf_write_uint32(mxfFile, segment->editUnitByteCount));
     CHK_ORET(mxf_write_local_tl(mxfFile, 0x3f06, 4));
