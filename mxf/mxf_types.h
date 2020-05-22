@@ -268,6 +268,19 @@ typedef struct
     unsigned char bytes[24];
 } mxfAES3FixedData;
 
+typedef struct
+{
+    uint8_t s_siz;
+    uint8_t xr_siz;
+    uint8_t yr_siz;
+} mxfJ2KComponentSizing;
+
+typedef struct
+{
+    uint32_t p_cap;
+    uint16_t c_capi[32];    /* count is the number of bits set in p_cap */
+} mxfJ2KExtendedCapabilities;
+
 
 
 /* external MXF data lengths */
@@ -288,6 +301,7 @@ typedef struct
 #define mxfProductVersion_extlen        10
 #define mxfRGBALayout_extlen            16
 #define mxfAES3FixedData_extlen         24
+#define mxfJ2KComponentSizing_extlen    3
 
 
 static const mxfUUID g_Null_UUID =
