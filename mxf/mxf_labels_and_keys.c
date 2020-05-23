@@ -187,6 +187,11 @@ int mxf_is_mpeg_video_ec(const mxfUL *label, int frame_wrapped)
                (!frame_wrapped && label->octet15 == 0x02));  /*   clip wrapped */
 }
 
+int mxf_is_jpeg2000_ec(const mxfUL *label)
+{
+    return mxf_is_generic_container_label(label) &&
+           label->octet13 == 0x0c;
+}
 
 
 void mxf_complete_essence_element_key(mxfKey *key, uint8_t count, uint8_t type, uint8_t num)

@@ -301,6 +301,24 @@ static const mxfUL MXF_CMDEF_L(RDD36_4444)      = MXF_RDD36_CMDEV_L(0x05);
 static const mxfUL MXF_CMDEF_L(RDD36_4444_XQ)   = MXF_RDD36_CMDEV_L(0x06);
 
 
+/* JPEG 2000 */
+
+#define MXF_JPEG2000_CMDEV_L(variant, constraints) \
+    {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d,  0x04, 0x01, 0x02, 0x02, 0x03, 0x01, variant, constraints}
+
+#define MXF_JPEG2000_GENERIC_VARIANT                0x01
+#define MXF_JPEG2000_2K_IMF_SINGLE_LOSSY_VARIANT    0x02
+#define MXF_JPEG2000_4K_IMF_SINGLE_LOSSY_VARIANT    0x03
+#define MXF_JPEG2000_8K_IMF_SINGLE_LOSSY_VARIANT    0x04
+#define MXF_JPEG2000_2K_IMF_REVERSIBLE_VARIANT      0x05
+#define MXF_JPEG2000_4K_IMF_REVERSIBLE_VARIANT      0x06
+#define MXF_JPEG2000_8K_IMF_REVERSIBLE_VARIANT      0x07
+#define MXF_JPEG2000_HTJ2K_VARIANT                  0x08
+
+static const mxfUL MXF_CMDEF_L(JPEG2000_UNDEFINED)     = MXF_JPEG2000_CMDEV_L(MXF_JPEG2000_GENERIC_VARIANT, 0x7f);
+static const mxfUL MXF_CMDEF_L(JPEG2000_HTJ2K_GENERIC) = MXF_JPEG2000_CMDEV_L(MXF_JPEG2000_HTJ2K_VARIANT, 0x01);
+
+
 /* uncompressed picture coding */
 
 /* fourcc 2vuy */
@@ -522,6 +540,21 @@ static const mxfUL MXF_EC_L(VC3ClipWrapped)  = MXF_VC3_EC_L(0x02);
     MXF_GENERIC_CONTAINER_LABEL(0x0d, 0x1c, byte15, 0x00)
 
 static const mxfUL MXF_EC_L(RDD36FrameWrapped) = MXF_RDD36_EC_L(0x01);
+
+
+/* JPEG 2000 */
+
+#define MXF_JPEG2000_EC_L(regver, byte15) \
+    MXF_GENERIC_CONTAINER_LABEL(regver, 0x0c, byte15, 0x00)
+
+static const mxfUL MXF_EC_L(JPEG2000FUWrapped) = MXF_JPEG2000_EC_L(0x07, 0x01);
+static const mxfUL MXF_EC_L(JPEG2000CnWrapped) = MXF_JPEG2000_EC_L(0x07, 0x02);
+static const mxfUL MXF_EC_L(JPEG2000I1Wrapped) = MXF_JPEG2000_EC_L(0x0d, 0x03);
+static const mxfUL MXF_EC_L(JPEG2000I2Wrapped) = MXF_JPEG2000_EC_L(0x0d, 0x04);
+static const mxfUL MXF_EC_L(JPEG2000F1Wrapped) = MXF_JPEG2000_EC_L(0x0d, 0x05);
+static const mxfUL MXF_EC_L(JPEG2000P1Wrapped) = MXF_JPEG2000_EC_L(0x0d, 0x06);
+
+int mxf_is_jpeg2000_ec(const mxfUL *label);
 
 
 /* Data */
@@ -820,6 +853,18 @@ static const mxfKey MXF_EE_K(SDTI_CP_System_Pack) =
     MXF_TRACK_NUM(0x15, elecount, eletype, elenum)
 
 #define MXF_RDD36_FRAME_WRAPPED_EE_TYPE   0x17
+
+
+/* JPEG 2000 */
+
+#define MXF_JPEG2000_EE_K(elecount, eletype, elenum) \
+    MXF_GENERIC_CONTAINER_ELEMENT_KEY(0x01, 0x15, elecount, eletype, elenum)
+
+#define MXF_JPEG2000_TRACK_NUM(elecount, eletype, elenum) \
+    MXF_TRACK_NUM(0x15, elecount, eletype, elenum)
+
+#define MXF_JPEG2000_NOT_CLIP_WRAPPED_EE_TYPE   0x08
+#define MXF_JPEG2000_CLIP_WRAPPED_EE_TYPE       0x09
 
 
 /* Data mappings */
