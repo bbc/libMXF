@@ -293,6 +293,7 @@ AC_CONFIG_FILES([
     tools/Makefile
     tools/MXFDump/Makefile
     tools/extract_avid_extensions/Makefile
+    tools/extract_jpeg2000_labels/Makefile
     msvc_build/Makefile
     msvc_build/vs10/Makefile
     libMXF.pc])

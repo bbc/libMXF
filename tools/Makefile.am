@@ -1,2 +1,1 @@
-SUBDIRS = MXFDump extract_avid_extensions
-
+SUBDIRS = MXFDump extract_avid_extensions extract_jpeg2000_labels
