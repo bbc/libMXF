@@ -304,7 +304,7 @@ static const mxfUL MXF_CMDEF_L(RDD36_4444_XQ)   = MXF_RDD36_CMDEV_L(0x06);
 /* JPEG 2000 */
 
 #define MXF_JPEG2000_CMDEV_L(variant, constraints) \
-    {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d,  0x04, 0x01, 0x02, 0x02, 0x03, 0x01, variant, constraints}
+    {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d, 0x04, 0x01, 0x02, 0x02, 0x03, 0x01, variant, constraints}
 
 #define MXF_JPEG2000_GENERIC_VARIANT                0x01
 #define MXF_JPEG2000_2K_IMF_SINGLE_LOSSY_VARIANT    0x02
@@ -317,6 +317,8 @@ static const mxfUL MXF_CMDEF_L(RDD36_4444_XQ)   = MXF_RDD36_CMDEV_L(0x06);
 
 static const mxfUL MXF_CMDEF_L(JPEG2000_UNDEFINED)     = MXF_JPEG2000_CMDEV_L(MXF_JPEG2000_GENERIC_VARIANT, 0x7f);
 static const mxfUL MXF_CMDEF_L(JPEG2000_HTJ2K_GENERIC) = MXF_JPEG2000_CMDEV_L(MXF_JPEG2000_HTJ2K_VARIANT, 0x01);
+
+void mxf_get_jpeg2000_coding_label(uint16_t profile, uint8_t main_level, uint8_t sub_level, mxfUL *label);
 
 
 /* uncompressed picture coding */

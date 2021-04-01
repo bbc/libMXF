@@ -157,6 +157,46 @@ int mxf_get_ddef_label(MXFDataDefEnum data_def, mxfUL *label)
 }
 
 
+void mxf_get_jpeg2000_coding_label(uint16_t profile, uint8_t main_level, uint8_t sub_level, mxfUL *label)
+{
+    uint8_t variant = 0x00;
+    uint8_t constraints = 0x7f;
+    if (profile == 0x00 && main_level == 255 && sub_level == 255) {
+        variant = 0x01;
+        constraints = 0x7f;
+    } else if (profile >= 0x03 && profile < 0x05 && main_level == 255 && sub_level == 255) {
+        variant = 0x01;
+        constraints = (uint8_t)profile;
+    } else if (profile == 0x10 && main_level > 0 && main_level < 8 && sub_level == 255) {
+        variant = 0x01;
+        constraints = profile + main_level;
+    } else if (profile >= 0x04 && profile < 0x0a) {
+        if (main_level == 0 && sub_level == 0) {
+            constraints = 0x01;
+        } else if (main_level > 0 && main_level < 4 && sub_level < 2) {
+            constraints = main_level * 2 + sub_level;
+        } else if (main_level >= 4 && main_level < 12 && sub_level < main_level - 1) {
+            constraints = 0x08;
+            for (uint8_t ml = 4; ml < main_level; ml++)
+                constraints += ml - 1;
+            constraints += sub_level;
+        }
+
+        if (constraints != 0x7f)
+            variant = profile - 2;
+    }
+
+    if (variant == 0x00) {
+        // Use the generic variant if the profile, main level or sub level are unknown
+        variant = 0x01;
+        constraints = 0x7f;
+    }
+
+    memcpy(label, &MXF_CMDEF_L(JPEG2000_UNDEFINED), sizeof(*label));
+    label->octet14 = variant;
+    label->octet15 = constraints;
+}
+
 
 int mxf_is_generic_container_label(const mxfUL *label)
 {
