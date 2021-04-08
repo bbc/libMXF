@@ -89,6 +89,20 @@ typedef uint8_t MXFColorSiting;
 
 typedef enum
 {
+    MXF_SCANNING_DIRECTION_LR_TB    = 0x00,
+    MXF_SCANNING_DIRECTION_RL_TB    = 0x01,
+    MXF_SCANNING_DIRECTION_LR_BT    = 0x02,
+    MXF_SCANNING_DIRECTION_RL_BT    = 0x03,
+    MXF_SCANNING_DIRECTION_TB_LR    = 0x04,
+    MXF_SCANNING_DIRECTION_TB_RL    = 0x05,
+    MXF_SCANNING_DIRECTION_BT_LR    = 0x06,
+    MXF_SCANNING_DIRECTION_BT_RL    = 0x07,
+} MXFScanningDirectionEnum;
+
+typedef uint8_t MXFScanningDirection;
+
+typedef enum
+{
     MXF_AVC_UNKNOWN_CODED_CONTENT_TYPE          = 0x00,
     MXF_AVC_PROGRESSIVE_FRAME_PICTURE           = 0x01,
     MXF_AVC_INTERLACED_FIELD_PICTURE            = 0x02,
