@@ -295,6 +295,16 @@ typedef struct
     uint16_t c_capi[32];    /* count is the number of bits set in p_cap */
 } mxfJ2KExtendedCapabilities;
 
+typedef struct
+{
+    uint16_t x;
+    uint16_t y;
+} mxfColorPrimary;
+
+typedef struct
+{
+    mxfColorPrimary primaries[3];
+} mxfThreeColorPrimaries;
 
 
 /* external MXF data lengths */
@@ -316,6 +326,8 @@ typedef struct
 #define mxfRGBALayout_extlen            16
 #define mxfAES3FixedData_extlen         24
 #define mxfJ2KComponentSizing_extlen    3
+#define mxfColorPrimary_extlen          4
+#define mxfThreeColorPrimaries_extlen   12
 
 
 static const mxfUUID g_Null_UUID =
@@ -336,6 +348,9 @@ static const mxfUMID g_Null_UMID =
 static const mxfExtendedUMID g_Null_Extended_UMID = {{0}};
 
 static const mxfRational g_Null_Rational = {0, 0};
+
+static const mxfThreeColorPrimaries g_Null_Three_Color_Primaries = {{{0, 0}}};
+static const mxfColorPrimary g_Null_Color_Primary = {0, 0};
 
 
 #ifdef __cplusplus

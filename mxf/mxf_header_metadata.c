@@ -270,6 +270,9 @@ static int validate_set(MXFMetadataSet *set, MXFSetDef *setDef, int logErrors)
                 case MXF_RGBALAYOUT_TYPE:
                     CHECK_LENGTH(16)
                     break;
+                case MXF_THREE_COLOR_PRIMARIES_TYPE:
+                    CHECK_LENGTH(12)
+                    break;
                 case MXF_RATIONAL_TYPE:
                     CHECK_LENGTH(8)
                     break;
@@ -301,6 +304,9 @@ static int validate_set(MXFMetadataSet *set, MXFSetDef *setDef, int logErrors)
                     break;
                 case MXF_RGBALAYOUTCOMPONENT_TYPE:
                     CHECK_LENGTH(2)
+                    break;
+                case MXF_COLOR_PRIMARY_TYPE:
+                    CHECK_LENGTH(4)
                     break;
                 case MXF_VERSIONTYPE_TYPE:
                     CHECK_LENGTH(2)
@@ -1261,6 +1267,20 @@ int mxf_get_j2k_ext_capabilities(const uint8_t *value, uint16_t value_len, mxfJ2
     return 1;
 }
 
+void mxf_get_color_primary(const uint8_t *value, mxfColorPrimary *result)
+{
+    mxf_get_uint16(value, &result->x);
+    mxf_get_uint16(&value[2], &result->y);
+}
+
+void mxf_get_three_color_primaries(const uint8_t *value, mxfThreeColorPrimaries *result)
+{
+    int i;
+    for (i = 0; i < 3; i++) {
+        mxf_get_color_primary(&value[i * mxfColorPrimary_extlen], &result->primaries[i]);
+    }
+}
+
 void mxf_get_array_header(const uint8_t *value, uint32_t *arrayLen, uint32_t *arrayItemLen)
 {
     mxf_get_uint32(value, arrayLen);
@@ -1750,6 +1770,20 @@ void mxf_set_j2k_ext_capabilities(const mxfJ2KExtendedCapabilities *value, uint8
     }
 }
 
+void mxf_set_color_primary(const mxfColorPrimary *value, uint8_t *result)
+{
+    mxf_set_uint16(value->x, result);
+    mxf_set_uint16(value->y, &result[2]);
+}
+
+void mxf_set_three_color_primaries(const mxfThreeColorPrimaries *value, uint8_t *result)
+{
+    int i;
+    for (i = 0; i < 3; i++) {
+        mxf_set_color_primary(&value->primaries[i], &result[i * mxfColorPrimary_extlen]);
+    }
+}
+
 void mxf_set_array_header(uint32_t arrayLen, uint32_t arrayElementLen, uint8_t *result)
 {
     mxf_set_uint32(arrayLen, result);
@@ -2033,6 +2067,16 @@ int mxf_set_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey
     CHK_ORET(mxf_complete_item_value(newItem, itemValueSize));
 
     return 1;
+}
+
+int mxf_set_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfColorPrimary *value)
+{
+    SET_VALUE(mxfColorPrimary_extlen, mxf_set_color_primary);
+}
+
+int mxf_set_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfThreeColorPrimaries *value)
+{
+    SET_VALUE(mxfThreeColorPrimaries_extlen, mxf_set_three_color_primaries);
 }
 
 int mxf_alloc_array_item_elements(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t elementLen,
@@ -2445,6 +2489,15 @@ int mxf_get_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey
     return 1;
 }
 
+int mxf_get_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfColorPrimary *value)
+{
+    GET_VALUE(mxfColorPrimary_extlen, mxf_get_color_primary);
+}
+
+int mxf_get_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfThreeColorPrimaries *value)
+{
+    GET_VALUE(mxfThreeColorPrimaries_extlen, mxf_get_three_color_primaries);
+}
 
 int mxf_get_array_item_count(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *count)
 {

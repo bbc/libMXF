@@ -110,6 +110,7 @@ MXF_ARRAY_TYPE_DEF(MXF_RATIONALARRAY_TYPE,          "RationalArray",        MXF_
 MXF_ARRAY_TYPE_DEF(MXF_RGBALAYOUT_TYPE,             "RGBALayout",           MXF_RGBALAYOUTCOMPONENT_TYPE, 8);
 MXF_ARRAY_TYPE_DEF(MXF_AES3_FIXED_DATA_ARRAY_TYPE,  "AES3FixedDataArray",   MXF_AES3_FIXED_DATA_TYPE, 0);
 MXF_ARRAY_TYPE_DEF(MXF_J2K_COMPONENT_SIZING_ARRAY_TYPE, "J2KComponentSizingArray", MXF_J2K_COMPONENT_SIZING_TYPE, 0);
+MXF_ARRAY_TYPE_DEF(MXF_THREE_COLOR_PRIMARIES_TYPE,  "ThreeColorPrimaries",  MXF_COLOR_PRIMARY_TYPE, 3);
 
 
 MXF_COMPOUND_TYPE_DEF(MXF_RATIONAL_TYPE, "Rational");
@@ -144,6 +145,10 @@ MXF_COMPOUND_TYPE_DEF(MXF_J2K_COMPONENT_SIZING_TYPE, "J2KComponentSizing");
 MXF_COMPOUND_TYPE_MEMBER("Ssiz",    MXF_UINT8_TYPE);
 MXF_COMPOUND_TYPE_MEMBER("XRsiz",   MXF_UINT8_TYPE);
 MXF_COMPOUND_TYPE_MEMBER("YRsiz",   MXF_UINT8_TYPE);
+
+MXF_COMPOUND_TYPE_DEF(MXF_COLOR_PRIMARY_TYPE, "ColorPrimary");
+MXF_COMPOUND_TYPE_MEMBER("X",   MXF_UINT16_TYPE);
+MXF_COMPOUND_TYPE_MEMBER("Y",   MXF_UINT16_TYPE);
 
 
 MXF_INTERPRETED_TYPE_DEF(MXF_VERSIONTYPE_TYPE,          "VersionType",      MXF_UINT16_TYPE, 0);
@@ -904,6 +909,34 @@ MXF_SET_DEFINITION(FileDescriptor, GenericPictureEssenceDescriptor,
         MXF_LABEL(0x06,0x0e,0x2b,0x34,0x01,0x01,0x01,0x09,0x04,0x01,0x02,0x01,0x01,0x06,0x01,0x00),
         0x3219,
         MXF_UL_TYPE,
+        0
+    );
+
+    MXF_ITEM_DEFINITION(GenericPictureEssenceDescriptor, MasteringDisplayPrimaries,
+        MXF_LABEL(0x06,0x0e,0x2b,0x34,0x01,0x01,0x01,0x0e,0x04,0x20,0x04,0x01,0x01,0x01,0x00,0x00),
+        0x0000,
+        MXF_THREE_COLOR_PRIMARIES_TYPE,
+        0
+    );
+
+    MXF_ITEM_DEFINITION(GenericPictureEssenceDescriptor, MasteringDisplayWhitePointChromaticity,
+        MXF_LABEL(0x06,0x0e,0x2b,0x34,0x01,0x01,0x01,0x0e,0x04,0x20,0x04,0x01,0x01,0x02,0x00,0x00),
+        0x0000,
+        MXF_COLOR_PRIMARY_TYPE,
+        0
+    );
+
+    MXF_ITEM_DEFINITION(GenericPictureEssenceDescriptor, MasteringDisplayMaximumLuminance,
+        MXF_LABEL(0x06,0x0e,0x2b,0x34,0x01,0x01,0x01,0x0e,0x04,0x20,0x04,0x01,0x01,0x03,0x00,0x00),
+        0x0000,
+        MXF_UINT32_TYPE,
+        0
+    );
+
+    MXF_ITEM_DEFINITION(GenericPictureEssenceDescriptor, MasteringDisplayMinimumLuminance,
+        MXF_LABEL(0x06,0x0e,0x2b,0x34,0x01,0x01,0x01,0x0e,0x04,0x20,0x04,0x01,0x01,0x04,0x00,0x00),
+        0x0000,
+        MXF_UINT32_TYPE,
         0
     );
 

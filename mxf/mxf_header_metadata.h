@@ -162,6 +162,8 @@ void mxf_get_rgba_layout(const uint8_t *value, mxfRGBALayout *result);
 void mxf_get_aes3_fixed_data(const uint8_t *value, mxfAES3FixedData *result);
 void mxf_get_j2k_component_sizing(const uint8_t *value, mxfJ2KComponentSizing *result);
 int mxf_get_j2k_ext_capabilities(const uint8_t *value, uint16_t value_len, mxfJ2KExtendedCapabilities *result);
+void mxf_get_color_primary(const uint8_t *value, mxfColorPrimary *result);
+void mxf_get_three_color_primaries(const uint8_t *value, mxfThreeColorPrimaries *result);
 void mxf_get_array_header(const uint8_t *value, uint32_t *arrayLen, uint32_t *arrayItemLen);
 uint16_t mxf_get_utf16string_size(const uint8_t *value, uint16_t valueLen);
 void mxf_get_utf16string(const uint8_t *value, uint16_t valueLen, mxfUTF16Char *result);
@@ -216,6 +218,8 @@ void mxf_set_aes3_fixed_data(const mxfAES3FixedData *value, uint8_t *result);
 void mxf_set_j2k_component_sizing(const mxfJ2KComponentSizing *value, uint8_t *result);
 uint16_t mxf_get_external_j2k_ext_capabilities_size(const mxfJ2KExtendedCapabilities *value);
 void mxf_set_j2k_ext_capabilities(const mxfJ2KExtendedCapabilities *value, uint8_t *result);
+void mxf_set_color_primary(const mxfColorPrimary *value, uint8_t *result);
+void mxf_set_three_color_primaries(const mxfThreeColorPrimaries *value, uint8_t *result);
 void mxf_set_array_header(uint32_t arrayLen, uint32_t arrayElementLen, uint8_t *result);
 
 
@@ -254,6 +258,8 @@ int mxf_set_boolean_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfBoolean 
 int mxf_set_product_version_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfProductVersion *value);
 int mxf_set_rgba_layout_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfRGBALayout *value);
 int mxf_set_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfJ2KExtendedCapabilities *value);
+int mxf_set_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfColorPrimary *value);
+int mxf_set_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfThreeColorPrimaries *value);
 
 int mxf_alloc_array_item_elements(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t elementLen,
                                   uint32_t count, uint8_t **elements);
@@ -301,6 +307,8 @@ int mxf_get_boolean_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfBoolean 
 int mxf_get_product_version_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfProductVersion *value);
 int mxf_get_rgba_layout_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfRGBALayout *value);
 int mxf_get_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfJ2KExtendedCapabilities *value);
+int mxf_get_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfColorPrimary *value);
+int mxf_get_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfThreeColorPrimaries *value);
 
 int mxf_get_array_item_count(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *count);
 int mxf_get_array_item_element_len(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *elementLen);
