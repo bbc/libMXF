@@ -22,7 +22,7 @@ dnl-----------------------------------------------------------------------------
 
 AC_INIT(m4_defn([m4_LIBMXF_LIBRARY_NAME]), m4_defn([m4_LIBMXF_VERSION]))
 AC_CONFIG_SRCDIR([mxf/mxf.h])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([1.11 -Wall parallel-tests tar-ustar])
@@ -65,15 +65,13 @@ dnl -- Enable options
 dnl-----------------------------------------------------------------------------
 
 AC_ARG_ENABLE(examples,
-	AC_HELP_STRING([--disable-examples],
-		[disable building of all examples [[default=no]]]),
+	AS_HELP_STRING([--disable-examples],[disable building of all examples [[default=no]]]),
 	enable_examples=$enableval,
 	enable_examples="yes")
 
 
 AC_ARG_ENABLE(archive,
-	AC_HELP_STRING([--disable-archive],
-		[disable building of archive example [[default=no]]]),
+	AS_HELP_STRING([--disable-archive],[disable building of archive example [[default=no]]]),
 	enable_archive=$enableval,
 	enable_archive="default")
 AM_CONDITIONAL(ENABLE_ARCHIVE,
@@ -82,8 +80,7 @@ AM_CONDITIONAL(ENABLE_ARCHIVE,
 
 
 AC_ARG_ENABLE(avidmxfinfo,
-	AC_HELP_STRING([--disable-avidmxfinfo],
-		[disable building of avidmxfinfo example [[default=no]]]),
+	AS_HELP_STRING([--disable-avidmxfinfo],[disable building of avidmxfinfo example [[default=no]]]),
 	enable_avidmxfinfo=$enableval,
 	enable_avidmxfinfo="default")
 
@@ -93,8 +90,7 @@ AM_CONDITIONAL(ENABLE_AVIDMXFINFO,
 
 
 AC_ARG_ENABLE(reader,
-	AC_HELP_STRING([--disable-reader],
-		[disable building of reader example [[default=no]]]),
+	AS_HELP_STRING([--disable-reader],[disable building of reader example [[default=no]]]),
 	enable_reader=$enableval,
 	enable_reader="default")
 
@@ -104,8 +100,7 @@ AM_CONDITIONAL(ENABLE_READER,
 
 
 AC_ARG_ENABLE(transfertop2,
-	AC_HELP_STRING([--disable-transfertop2],
-		[disable building of transfertop2 example [[default=no]]]),
+	AS_HELP_STRING([--disable-transfertop2],[disable building of transfertop2 example [[default=no]]]),
 	enable_transfertop2=$enableval,
 	enable_transfertop2="default")
 
@@ -115,8 +110,7 @@ AM_CONDITIONAL(ENABLE_TRANSFERTOP2,
 
 
 AC_ARG_ENABLE(writeavidmxf,
-	AC_HELP_STRING([--disable-writeavidmxf],
-		[disable building of writeavidmxf example [[default=no]]]),
+	AS_HELP_STRING([--disable-writeavidmxf],[disable building of writeavidmxf example [[default=no]]]),
 	enable_writeavidmxf=$enableval,
 	enable_writeavidmxf="default")
 
@@ -160,7 +154,7 @@ AC_ARG_WITH([aafsdk],
 if test x"$with_aafsdk" != xno; then
 	AC_CHECK_FILE($with_aafsdk/lib/debug/libaaflib.a,
 				  [],
-				  AC_ERROR(AAF SDK library not found at $with_aafsdk))
+				  AC_MSG_ERROR(AAF SDK library not found at $with_aafsdk))
 fi
 AM_CONDITIONAL([HAVE_AAFSDK], [test x"$with_aafsdk" != xno])
 
@@ -206,7 +200,7 @@ AC_FUNC_FSEEKO
 
 AC_CHECK_FUNCS([gettimeofday memmove memset sqrt strerror strncasecmp strerror_r])
 AC_CHECK_FUNC([strdup],,
-			  AC_ERROR(require implementation for missing strdup function))
+			  AC_MSG_ERROR(require implementation for missing strdup function))
 
 
 dnl-----------------------------------------------------------------------------
