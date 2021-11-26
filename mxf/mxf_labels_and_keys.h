@@ -848,8 +848,8 @@ static const mxfKey MXF_EE_K(SDTI_CP_System_Pack) =
 #define MXF_VC3_TRACK_NUM(elecount, eletype, elenum) \
     MXF_TRACK_NUM(0x15, elecount, eletype, elenum)
 
-#define MXF_VC3_FRAME_WRAPPED_EE_TYPE      0x05
-#define MXF_VC3_CLIP_WRAPPED_EE_TYPE       0x06
+#define MXF_VC3_FRAME_WRAPPED_EE_TYPE      0x0C
+#define MXF_VC3_CLIP_WRAPPED_EE_TYPE       0x0D
 
 
 /* RDD-36 (ProRes) */
