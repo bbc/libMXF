@@ -719,6 +719,22 @@ void mxf_swap_uid(mxfUID *swap_uid, const mxfUID *uid)
     memcpy(&swap_uid->octet8, &uid->octet0, 8);
 }
 
+int mxf_is_simple_idau_umid(const mxfUMID *umid)
+{
+    const mxfUMID simple_idau_umid = {
+        0x06, 0x0a, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x05, 0x01, 0x01, 0x0f, 0x20,                          // label for UUID/UL material number
+        0x13, 0x00, 0x00, 0x00,                                                                          // length & instance number (0)
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00   // UUID/UL material number
+    };
+
+    return memcmp(umid, &simple_idau_umid, 16) == 0;
+}
+
+void mxf_extract_umid_material_number(mxfUID *idau, const mxfUMID *umid)
+{
+    memcpy(&idau->octet0, &umid->octet16, 16);
+}
+
 MXFEssenceWrappingType mxf_get_essence_wrapping_type(const mxfUL *label)
 {
     size_t i;

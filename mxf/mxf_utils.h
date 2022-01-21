@@ -109,6 +109,9 @@ int mxf_is_ul(const mxfUID *uid);
 int mxf_is_swapped_ul(const mxfUID *uid);
 void mxf_swap_uid(mxfUID *swap_uid, const mxfUID *uid);
 
+int mxf_is_simple_idau_umid(const mxfUMID *umid);
+void mxf_extract_umid_material_number(mxfUID *idau, const mxfUMID *umid);
+
 
 MXFEssenceWrappingType mxf_get_essence_wrapping_type(const mxfUL *label);
 
