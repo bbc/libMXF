@@ -352,7 +352,7 @@ void clear_user_comments(PackageDefinitions *definitions)
 int add_locator(PackageDefinitions *definitions, int64_t position, const char *comment, AvidRGBColor color)
 {
     Locator *newLocator = NULL;
-    Locator *locator;
+    Locator *locator = NULL;
     MXFListIterator iter;
     int inserted = 0;
 
