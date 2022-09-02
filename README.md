@@ -8,7 +8,6 @@ libMXF was originally developed as part of the [Ingex Project](http://ingex.sour
 
 The [MXFDump](./tools/MXFDump) MXF text dumper utility from the [AAF SDK](https://sourceforge.net/projects/aaf/) is provided in this project for convenience.
 
-
 ## Examples
 
 A number of applications and library code can be found in the [examples](./examples) directory. These are not part of the core library and are not required to build libMXF++ or bmx.
@@ -22,11 +21,9 @@ A number of applications and library code can be found in the [examples](./examp
 * [writeaviddv50](./examples/writeaviddv50): example utility for writing DV 50 MBit/s video in Avid MXF OP-Atom files.
 * [writeavidmxf](./examples/writeavidmxf): library code and utility for writing Avid MXF OP-Atom files. This utility has been superseded by `raw2bmx` in the bmx project.
 
-
 ## Build and Installation
 
 libMXF is developed on Ubuntu Linux but is supported on other Unix-like systems using the autotools build system. A set of Microsoft Visual C++ project files are provided for Windows.
-
 
 ### Dependencies
 
@@ -34,10 +31,10 @@ The following libraries must be installed to build libMXF. The (Ubuntu) debian p
 
 * uuid, Unix-like systems only (uuid-dev)
 
-
 ### Unix-like Systems Build
 
 Install the development versions of the dependency libraries. The libMXF library and example applications can then be built from source using autotools as follows,
+
 ```bash
 ./autogen.sh
 ./configure
@@ -45,29 +42,34 @@ make
 ```
 
 Run
+
 ```bash
 ./configure -h
 ```
+
 to see a list of build configuration options.
 
 A number of `--disable-*` options are provided for disabling all examples (`--disable-examples`) or specific ones (e.g. `--disable-writeavidmxf`). The `--disable-examples` option can be combined with `--enable-*` options to enable specific examples. The bmx project does not require the examples and therefore libMXF can be configured using `--disable-examples`.
 
 There are a number of core library and example regression tests that can be run using
+
 ```bash
 make check
 ```
 
 Finally, the core library and examples can be installed using
+
 ```bash
 sudo make install
 ```
 
 To avoid library link errors similar to "error while loading shared libraries" when building libMXF++ or bmx run
+
 ```bash
 sudo /sbin/ldconfig
 ```
-to update the runtime linker cache after installation.
 
+to update the runtime linker cache after installation.
 
 ### Microsoft Visual Studio C++ Build
 
@@ -79,11 +81,9 @@ The build depends on the `mxf_scm_version.h` header file in the root directory t
 
 The [MXFDump.sln](./msvc_build/vs10/MXFDump.sln) build solution file is used to build the MXFDump text dumper tool.
 
-
 ## Source and Binary Distributions
 
 Source distributions and Windows binaries are made [available on SourceForge](https://sourceforge.net/projects/bmxlib/files/).
-
 
 ## License
 
