@@ -2,7 +2,7 @@
 
 libMXF is a low-level C library for reading and writing the [SMPTE ST 377-1 MXF file format](https://ieeexplore.ieee.org/document/7292073).
 
-libMXF and the associated libMXF++ C++ wrapper library are used in the bmx project.
+libMXF and the associated [libMXF++](https://github.com/bbc/libMXFpp) C++ wrapper library are used in the [bmx](https://github.com/bbc/bmx) project.
 
 libMXF was originally developed as part of the [Ingex Project](http://ingex.sourceforge.net/) where it supported MXF transfer, playback and storage applications. libMXF was also used in the [BBC Archive Preservation Project](https://www.bbc.co.uk/rd/publications/whitepaper275) to migrate BBC archive content from video tapes to files.
 
@@ -10,16 +10,16 @@ The [MXFDump](./tools/MXFDump) MXF text dumper utility from the [AAF SDK](https:
 
 ## Examples
 
-A number of applications and library code can be found in the [examples](./examples) directory. These are not part of the core library and are not required to build libMXF++ or bmx.
+A number of applications and library code can be found in the [examples](./examples) directory. These are not part of the core library and are not required to build [libMXF++](https://github.com/bbc/libMXFpp) or [bmx](https://github.com/bbc/bmx).
 
 * [archive](./examples/archive): library code and utilities used in the [BBC Archive Preservation Project](https://www.bbc.co.uk/rd/publications/whitepaper275).
 * [avidmxfinfo](./examples/avidmxfinfo): library and utility for extracting metadata about Avid MXF OP-Atom files. This utility has been superseded by
-`mxf2raw` in the bmx project.
+`mxf2raw` in the [bmx](https://github.com/bbc/bmx) project.
 * [reader](./examples/reader): library code used by the [Ingex Player](http://ingex.sourceforge.net/) for reading MXF files.
 * [transfertop2](./examples/transfertop2): utilities used in the [TransferToP2](http://ingex.sourceforge.net/TransferToP2.html) application to allow edited sequences to be transferred from an editing system to a P2 card.
 * [vlc](./examples/vlc): legacy code that was written to test how easy it would be to support MXF in [VLC](https://www.videolan.org/vlc/).
 * [writeaviddv50](./examples/writeaviddv50): example utility for writing DV 50 MBit/s video in Avid MXF OP-Atom files.
-* [writeavidmxf](./examples/writeavidmxf): library code and utility for writing Avid MXF OP-Atom files. This utility has been superseded by `raw2bmx` in the bmx project.
+* [writeavidmxf](./examples/writeavidmxf): library code and utility for writing Avid MXF OP-Atom files. This utility has been superseded by `raw2bmx` in the [bmx](https://github.com/bbc/bmx) project.
 
 ## Build and Installation
 
@@ -63,7 +63,7 @@ Finally, the core library and examples can be installed using
 sudo make install
 ```
 
-To avoid library link errors similar to "error while loading shared libraries" when building libMXF++ or bmx run
+To avoid library link errors similar to "error while loading shared libraries" when building [libMXF++](https://github.com/bbc/libMXFpp) or [bmx](https://github.com/bbc/bmx) run
 
 ```bash
 sudo /sbin/ldconfig
