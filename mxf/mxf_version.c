@@ -35,9 +35,14 @@
 #include "config.h"
 #endif
 
-#include "mxf_scm_version.h"
+#include <string.h>
 
 #include <mxf/mxf.h>
+#include <mxf/mxf_utils.h>
+#include <mxf/mxf_macros.h>
+
+#include "git.h"
+#include "fallback_git_version.h"
 
 
 #define LPREF(s)    L ## s
@@ -86,9 +91,6 @@ static const char *g_libmxfPlatformString           =     LIBMXF_LIBRARY_NAME   
 static const mxfUTF16Char *g_libmxfPlatformWString  = L"" LIBMXF_LIBRARY_WNAME L" (Unknown)";
 #endif
 
-static const char *g_libmxfSCMVersionString             =      LIBMXF_SCM_VERSION;
-static const mxfUTF16Char *g_libmxfSCMVersionWString    = WSTR(LIBMXF_SCM_VERSION);
-
 static const char *g_regtestPlatformString              =  "libMXF (Linux)";
 static const mxfUTF16Char *g_regtestPlatformWString     = L"libMXF (Linux)";
 static const char *g_regtestSCMVersionString            =  "regtest-head";
@@ -120,12 +122,33 @@ const mxfUTF16Char* mxf_default_get_platform_wstring(void)
 
 const char* mxf_default_get_scm_version_string(void)
 {
-    return g_libmxfSCMVersionString;
+    static char version_string[64] = {0};
+    if (version_string[0] == 0) {
+        const char *describe = git_Describe();
+#ifdef PACKAGE_GIT_VERSION_STRING
+        if (strcmp(describe, "unknown") == 0) {
+            mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s", PACKAGE_GIT_VERSION_STRING);
+        }
+        else
+#endif
+        {
+            if (git_AnyUncommittedChanges())
+                mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s-dirty", describe);
+            else
+                mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s", describe);
+        }
+    }
+
+    return version_string;
 }
 
 const mxfUTF16Char* mxf_default_get_scm_version_wstring(void)
 {
-    return g_libmxfSCMVersionWString;
+    static mxfUTF16Char version_wstring[64] = {0};
+    if (version_wstring[0] == 0)
+        mxf_utf8_to_utf16(version_wstring, mxf_default_get_scm_version_string(), ARRAY_SIZE(version_wstring));
+
+    return version_wstring;
 }
 
 

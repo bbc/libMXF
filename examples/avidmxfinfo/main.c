@@ -61,6 +61,7 @@ int main(int argc, const char *argv[])
     int result;
     int i;
     const char *inputFilename;
+    int test = 0;
 
     while (cmdlnIndex < argc)
     {
@@ -69,6 +70,11 @@ int main(int argc, const char *argv[])
         {
             usage(argv[0]);
             return 0;
+        }
+        else if (strcmp(argv[cmdlnIndex], "--test") == 0)
+        {
+            test = 1;
+            cmdlnIndex++;
         }
         else
         {
@@ -112,6 +118,9 @@ int main(int argc, const char *argv[])
                     fprintf(stderr, "Failed to read info (%s)\n", inputFilename);
                     break;
             }
+
+            if (test)
+                return result;
 
             continue;
         }
