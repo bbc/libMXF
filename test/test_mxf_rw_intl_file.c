@@ -94,6 +94,7 @@ int main()
     mxf_file_close(&writer);
     mxf_free_rw_intl(&interleaver);
 
+    free(readerData);
     free(data);
 
     return 0;
