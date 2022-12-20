@@ -1,7 +1,5 @@
 /*
- * libMXF version information
- *
- * Copyright (C) 2006, British Broadcasting Corporation
+ * Copyright (C) 2022, British Broadcasting Corporation
  * All Rights Reserved.
  *
  * Author: Philip de Nier
@@ -31,49 +29,73 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MXF_VERSION_H_
-#define MXF_VERSION_H_
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 
-#ifdef __cplusplus
-extern "C"
+static void write_buffer(FILE *file, const unsigned char *buffer, size_t size)
 {
-#endif
-
-
-typedef const mxfProductVersion* (*mxf_get_version_func)(void);
-typedef const char* (*mxf_get_platform_string_func)(void);
-typedef const mxfUTF16Char* (*mxf_get_platform_wstring_func)(void);
-typedef const char* (*mxf_get_scm_version_string_func)(void);
-typedef const mxfUTF16Char* (*mxf_get_scm_version_wstring_func)(void);
-
-extern mxf_get_version_func mxf_get_version;
-extern mxf_get_platform_string_func mxf_get_platform_string;
-extern mxf_get_platform_wstring_func mxf_get_platform_wstring;
-extern mxf_get_scm_version_string_func mxf_get_scm_version_string;
-extern mxf_get_scm_version_wstring_func mxf_get_scm_version_wstring;
-
-
-const mxfProductVersion* mxf_default_get_version(void);
-const char* mxf_default_get_platform_string(void);
-const mxfUTF16Char* mxf_default_get_platform_wstring(void);
-const char* mxf_default_get_scm_version_string(void);
-const mxfUTF16Char* mxf_default_get_scm_version_wstring(void);
-
-const mxfProductVersion* mxf_regtest_get_version(void);
-const char* mxf_regtest_get_platform_string(void);
-const mxfUTF16Char* mxf_regtest_get_platform_wstring(void);
-const char* mxf_regtest_get_scm_version_string(void);
-const mxfUTF16Char* mxf_regtest_get_scm_version_wstring(void);
-
-
-
-
-#ifdef __cplusplus
+    if (fwrite(buffer, 1, size, file) != size) {
+        fprintf(stderr, "Failed to write data: %s\n", strerror(errno));
+        exit(1);
+    }
 }
-#endif
 
+static void write_zeros(FILE *file, size_t size)
+{
+    static const unsigned char zeros[256] = {0};
 
-#endif
+    size_t whole_count   = size / sizeof(zeros);
+    size_t partial_count = size % sizeof(zeros);
 
+    size_t i;
+    for (i = 0; i < whole_count; i++)
+        write_buffer(file, zeros, sizeof(zeros));
 
+    if (partial_count > 0)
+        write_buffer(file, zeros, partial_count);
+}
+
+static void print_usage(const char *cmd)
+{
+    fprintf(stderr, "Usage: %s <size> <filename>\n", cmd);
+}
+
+int main(int argc, const char **argv)
+{
+    const char *filename;
+    unsigned int size;
+    FILE *file;
+
+    if (argc == 1) {
+        print_usage(argv[0]);
+        return 0;
+    }
+    if (argc != 3) {
+        print_usage(argv[0]);
+        fprintf(stderr, "Invalid argument count\n");
+        return 1;
+    }
+
+    size = atoi(argv[1]);
+    filename = argv[2];
+
+    file = fopen(filename, "wb");
+    if (!file) {
+        fprintf(stderr, "Failed to open file '%s': %s\n", filename, strerror(errno));
+        return 1;
+    }
+
+    if (size > 0)
+        write_zeros(file, size);
+
+    fclose(file);
+
+    return 0;
+}
