@@ -8,6 +8,12 @@ if(MSVC AND LIBMXF_SET_MSVC_RUNTIME AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.15
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
+if(BUILD_SHARED_LIBS)
+    # Ensure that static library code can be linked into the dynamic libraries (-fPIC compile option)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+set(CMAKE_CXX_STANDARD 11)
+
 project(libMXF
     VERSION 1.0.3
     DESCRIPTION "Low-level C library for reading and writing the SMPTE ST 377-1 MXF file format"
