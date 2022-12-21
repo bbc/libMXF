@@ -1,6 +1,3 @@
-# Option to build a shared object library
-option(BUILD_SHARED_LIBS "Build using shared libraries" $<IF:MSVC:OFF:ON>)
-
 # Option to build testing
 # This option is ignored if BUILD_TESTING is defined and falsy
 option(LIBMXF_BUILD_TESTING "Build libMXF testing" ON)
@@ -33,9 +30,15 @@ option(LIBMXF_BUILD_MXFDUMP "Build the MXFDump tool" ON)
 set(LIBMXF_TEST_SAMPLES_DIR "test_samples" CACHE STRING "Directory for writing test sample files")
 
 if(UNIX)
+    # Option to build a shared object library
+    option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
     # Run tests with valgrind
     option(LIBMXF_TEST_WITH_VALGRIND "Run tests with valgrind" OFF)
 elseif(MSVC)
+    # Shared library currently not supported
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build using shared libraries")
+
     # Option to set to use the MultiThreadedDLL runtime
     option(LIBMXF_SET_MSVC_RUNTIME "Enable setting MSVC runtime to MultiThreadedDLL" ON)
 endif()
