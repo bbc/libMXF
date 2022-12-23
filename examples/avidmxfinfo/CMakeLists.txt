@@ -21,7 +21,10 @@ set_target_properties(avidmxfinfo PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-install(TARGETS avidmxfinfo LIBRARY DESTINATION lib)
+install(TARGETS avidmxfinfo
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
 install(FILES ${avidmxfinfo_headers} DESTINATION include/mxf/examples/avidmxfinfo)
 
 

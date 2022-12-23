@@ -26,7 +26,10 @@ set_target_properties(writeavidmxf PROPERTIES
 
 # Only install if build is enabled, and not only for testing avidmxfinfo & reader
 if(LIBMXF_BUILD_EXAMPLES OR LIBMXF_BUILD_WRITEAVIDMXF)
-    install(TARGETS writeavidmxf LIBRARY DESTINATION lib)
+    install(TARGETS writeavidmxf
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+    )
     install(FILES ${writeavidmxf_headers} DESTINATION include/mxf/examples/writeavidmxf)
 endif()
 

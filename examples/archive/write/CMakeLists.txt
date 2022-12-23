@@ -28,7 +28,10 @@ set_target_properties(writearchivemxf PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-install(TARGETS writearchivemxf LIBRARY DESTINATION lib)
+install(TARGETS writearchivemxf
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
 install(FILES ${writearchivemxf_headers} DESTINATION include/mxf/examples/archive)
 
 

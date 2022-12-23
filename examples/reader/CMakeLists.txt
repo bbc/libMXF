@@ -26,7 +26,10 @@ set_target_properties(mxfreader PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-install(TARGETS mxfreader LIBRARY DESTINATION lib)
+install(TARGETS mxfreader
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
 install(FILES ${mxfreader_headers} DESTINATION include/mxf/examples/reader)
 
 
