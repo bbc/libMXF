@@ -1,5 +1,7 @@
 //=---------------------------------------------------------------------=
 //
+// $Id$ $Name$
+//
 // The contents of this file are subject to the AAF SDK Public Source
 // License Agreement Version 2.0 (the "License"); You may not use this
 // file except in compliance with the License.  The License is available
@@ -29,11 +31,97 @@
 //
 //=---------------------------------------------------------------------=
 
+// Labels are 16 octets in size, octet1 .. octet16
+//
+
+// Octets 1-7 are assumed as follows - 06.0e.2b.34.04.01.01
+
+// MXF_ESSENCE_CONTAINER_VERSION(octet8)
+//
+//  Define the registry version
+//
+//     octet8      = version of registry at time of registration
+//
+// MXF_ESSENCE_CONTAINER_SPACE(octet9, octet10, octet11, octet12, description)
+//
+//   Define a number space for labels
+//
+//     octet9      = octet  9 of the label
+//     octet10     = octet 10 of the label
+//     octet11     = octet 11 of the label
+//     octet12     = octet 12 of the label
+//     description = description shared by all labels in this part of the space
+//
+// MXF_ESSENCE_CONTAINER_NODE(octet13, octet14, description)
+//
+//   Define a node within a number space
+//
+//     octet13     = octet 13 of the label
+//     octet14     = octet 14 of the label
+//     description = description shared by all labels with this prefix
+//
+// MXF_ESSENCE_CONTAINER_LABEL(octet15, octet16, description)
+//
+//   Define a label
+//
+//     octet13     = octet 15 of the label
+//     octet14     = octet 16 of the label
+//     description = description of the label
+//
+// MXF_ESSENCE_CONTAINER_END()
+//
+//   End the definition of a node within a number space
+//
+// MXF_ESSENCE_CONTAINER_END_SPACE()
+//
+//   End the definition of a number space for labels
+//
+// MXF_ESSENCE_CONTAINER_END_VERSION()
+//
+//   End the definition of the registry version
+//
+
+// Default empty definitions so that you only have to define
+// those macros you actually want to use.
+//
+#if !defined(MXF_ESSENCE_CONTAINER_VERSION)
+#define MXF_ESSENCE_CONTAINER_VERSION(octet8)
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_SPACE)
+#define MXF_ESSENCE_CONTAINER_SPACE(octet9, octet10, \
+                                    octet11, octet12, description)
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_NODE)
+#define MXF_ESSENCE_CONTAINER_NODE(octet13, octet14, description)
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_LABEL)
+#define MXF_ESSENCE_CONTAINER_LABEL(octet15, octet16, description)
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_END)
+#define MXF_ESSENCE_CONTAINER_END()
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_END_SPACE)
+#define MXF_ESSENCE_CONTAINER_END_SPACE()
+#endif
+
+#if !defined(MXF_ESSENCE_CONTAINER_END_VERSION)
+#define MXF_ESSENCE_CONTAINER_END_VERSION()
+#endif
+
 // MXF Essence container labels
 
 // This file is hand maintained. It is based on RP224. Eventually this file,
 // or one like it, should be automatically generated from the SMPTE registry.
 //
+
+MXF_ESSENCE_CONTAINER_VERSION(0x01)
+
+MXF_ESSENCE_CONTAINER_SPACE(0x0d, 0x01, 0x03, 0x01, "SPMTE registered labels")
 
 // Generic container (deprecated)
 //
@@ -161,6 +249,16 @@ MXF_ESSENCE_CONTAINER_LABEL(0x04, 0x00, "AES3 (clip wrapped)")
 
 MXF_ESSENCE_CONTAINER_END()
 
+#define MXF_ESSENCE_CONTAINER_MPEG_WRAPPING_SCHEMES(octet15) \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x01, "stream id " #octet15 " (frame wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x02, "stream id " #octet15 " (clip wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x03, "stream id " #octet15 " (custom stripe wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x04, "stream id " #octet15 " (custom PES wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x05, "stream id " #octet15 " (custom fixed audio size wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x06, "stream id " #octet15 " (custom splice wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x07, "stream id " #octet15 " (custom closed GOP wrapped)") \
+MXF_ESSENCE_CONTAINER_LABEL(octet15, 0x7f, "stream id " #octet15 " (custom unconstrained wrapped )")
+
 // MPEG Packetized Elementary Stream
 //
 MXF_ESSENCE_CONTAINER_NODE(0x02, 0x07, "MPEG Packetized Elementary Stream")
@@ -179,6 +277,26 @@ MXF_ESSENCE_CONTAINER_NODE(0x02, 0x09, "MPEG Transport Stream")
 // None yet.
 MXF_ESSENCE_CONTAINER_END()
 
+// AVC NAL Unit Stream
+//
+MXF_ESSENCE_CONTAINER_NODE(0x02, 0x0f, "AVC NAL Unit Stream")
+
+  // AVC NAL Unit Stream, stream id 0x60
+MXF_ESSENCE_CONTAINER_MPEG_WRAPPING_SCHEMES(0x60)
+
+MXF_ESSENCE_CONTAINER_END()
+
+// AVC Byte Stream
+//
+MXF_ESSENCE_CONTAINER_NODE(0x02, 0x10, "AVC Byte Stream")
+
+  // AVC Byte Stream, stream id 0x60
+MXF_ESSENCE_CONTAINER_MPEG_WRAPPING_SCHEMES(0x60)
+
+MXF_ESSENCE_CONTAINER_END()
+
+#undef MXF_ESSENCE_CONTAINER_MPEG_WRAPPING_SCHEMES
+
 // A-Law sound element mapping
 //
 MXF_ESSENCE_CONTAINER_NODE(0x02, 0x0A, "A-Law Sound Element")
@@ -188,3 +306,58 @@ MXF_ESSENCE_CONTAINER_LABEL(0x02, 0x00, "A-Law Audio (clip wrapped)")
 MXF_ESSENCE_CONTAINER_LABEL(0x03, 0x00, "A-Law Audio (custom wrapped)")
 
 MXF_ESSENCE_CONTAINER_END()
+
+// JPEG 2000 picture element mapping
+//
+MXF_ESSENCE_CONTAINER_NODE(0x02, 0x0C, "JPEG 2000 Picture Element")
+
+MXF_ESSENCE_CONTAINER_LABEL(0x01, 0x00, "JPEG 2000 (frame wrapped)")
+MXF_ESSENCE_CONTAINER_LABEL(0x02, 0x00, "JPEG 2000 (clip wrapped)")
+
+MXF_ESSENCE_CONTAINER_END()
+
+MXF_ESSENCE_CONTAINER_END_SPACE()
+
+#if 0
+MXF_ESSENCE_CONTAINER_SPACE(0x0e, 0x04, 0x03, 0x01, "Avid private labels")
+
+// Avid Compressed High Definition
+MXF_ESSENCE_CONTAINER_NODE(0x02, 0x06, "AvidHD")
+
+// 1080p 
+MXF_ESSENCE_CONTAINER_LABEL(0x01, 0x01, "X_6_1_1080p")
+MXF_ESSENCE_CONTAINER_LABEL(0x01, 0x02, "8_7_1_1080p")
+MXF_ESSENCE_CONTAINER_LABEL(0x01, 0x03, "8_4_1_1080p")
+
+// 1080i
+MXF_ESSENCE_CONTAINER_LABEL(0x02, 0x01, "X_6_1_1080i")
+MXF_ESSENCE_CONTAINER_LABEL(0x02, 0x02, "8_7_1_1080i")
+MXF_ESSENCE_CONTAINER_LABEL(0x02, 0x03, "8_4_1_1080i")
+
+// 720p
+MXF_ESSENCE_CONTAINER_LABEL(0x03, 0x01, "X_5_1_720p")
+MXF_ESSENCE_CONTAINER_LABEL(0x03, 0x02, "8_4_1_720p")
+MXF_ESSENCE_CONTAINER_LABEL(0x03, 0x03, "8_6_1_720p")
+
+MXF_ESSENCE_CONTAINER_END()
+
+MXF_ESSENCE_CONTAINER_END_SPACE()
+#endif
+
+MXF_ESSENCE_CONTAINER_END_VERSION()
+
+// Undefine all macros
+//
+#undef MXF_ESSENCE_CONTAINER_VERSION
+
+#undef MXF_ESSENCE_CONTAINER_SPACE
+
+#undef MXF_ESSENCE_CONTAINER_NODE
+
+#undef MXF_ESSENCE_CONTAINER_LABEL
+
+#undef MXF_ESSENCE_CONTAINER_END
+
+#undef MXF_ESSENCE_CONTAINER_END_SPACE
+
+#undef MXF_ESSENCE_CONTAINER_END_VERSION

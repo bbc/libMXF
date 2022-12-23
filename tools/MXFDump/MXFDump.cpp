@@ -1,5 +1,7 @@
 //=---------------------------------------------------------------------=
 //
+// $Id$ $Name$
+//
 // The contents of this file are subject to the AAF SDK Public Source
 // License Agreement Version 2.0 (the "License"); You may not use this
 // file except in compliance with the License.  The License is available
@@ -38,10 +40,6 @@
 // progress understanding an MXF file even if all you have is this source and
 // a C++ compiler.
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,16 +73,16 @@
 #define MXF_COMPILER_GCC_INTEL_MACOSX
 #define MXF_OS_MACOSX
 #elif defined(__GNUC__) && defined(__x86_64__) && defined(__APPLE__)
+#define MXF_COMPILER_GCC_X86_64_MACOSX
+#define MXF_OS_UNIX
 #define MXF_COMPILER_GCC_INTEL_X86_64_MACOSX
 #define MXF_OS_MACOSX
-#elif defined(__APPLE__) && defined(__aarch64__) && defined(__GNUC__)
-#define MXF_COMPILER_GCC_ARM_MACOSX
+#elif defined(__GNUC__) && defined(__arm64__) && defined(__APPLE__)
+#define MXF_COMPILER_GCC_ARM64_MACOSX
+#define MXF_OS_UNIX
 #define MXF_OS_MACOSX
 #elif defined(__GNUC__) && defined(__powerpc__) && defined(__linux__)
 #define MXF_COMPILER_GCC_PPC_LINUX
-#define MXF_OS_UNIX
-#elif defined(__GNUC__) && defined(__arm__) && defined(__linux__)
-#define MXF_COMPILER_GCC_ARM_LINUX
 #define MXF_OS_UNIX
 #elif defined(mips) && defined(sgi)
 #define MXF_COMPILER_SGICC_MIPS_SGI
@@ -98,9 +96,6 @@
 #elif defined(__GNUC__) && defined(__sparc__) && defined(__sun__)
 #define MXF_COMPILER_GCC_SPARC_SUNOS
 #define MXF_OS_UNIX
-#elif defined(__GNUC__) && defined(__x86_64__) && defined(_WIN32)
-#define MXF_COMPILER_GCC_INTEL_WINDOWS
-#define MXF_OS_WINDOWS
 #else
 #error "Unknown compiler"
 #endif
@@ -169,7 +164,7 @@ typedef unsigned long long int mxfUInt64;
 #define MXFPRIx16 "hx"
 #define MXFPRIx32 "lx"
 #define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_GCC_X86_64_LINUX)
+#elif defined(MXF_COMPILER_GCC_X86_64_LINUX) || defined(MXF_COMPILER_GCC_X86_64_MACOSX)
 typedef unsigned char          mxfUInt08;
 typedef unsigned short int     mxfUInt16;
 typedef unsigned int	      mxfUInt32;
@@ -197,35 +192,7 @@ typedef unsigned long long int mxfUInt64;
 #define MXFPRIx16 "hx"
 #define MXFPRIx32 "lx"
 #define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_MWERKS_PPC_MACOSX)
-typedef unsigned char          mxfUInt08;
-typedef unsigned short int     mxfUInt16;
-typedef unsigned long int      mxfUInt32;
-typedef unsigned long long int mxfUInt64;
-
-#define MXFPRIu08 "u"
-#define MXFPRIu16 "hu"
-#define MXFPRIu32 "lu"
-#define MXFPRIu64 "llu"
-#define MXFPRIx08 "x"
-#define MXFPRIx16 "hx"
-#define MXFPRIx32 "lx"
-#define MXFPRIx64 "llx"
 #elif defined(MXF_COMPILER_GCC_PPC_MACOSX)
-typedef unsigned char          mxfUInt08;
-typedef unsigned short int     mxfUInt16;
-typedef unsigned long int      mxfUInt32;
-typedef unsigned long long int mxfUInt64;
-
-#define MXFPRIu08 "u"
-#define MXFPRIu16 "hu"
-#define MXFPRIu32 "lu"
-#define MXFPRIu64 "llu"
-#define MXFPRIx08 "x"
-#define MXFPRIx16 "hx"
-#define MXFPRIx32 "lx"
-#define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_GCC_INTEL_MACOSX)
 typedef unsigned char          mxfUInt08;
 typedef unsigned short int     mxfUInt16;
 typedef unsigned long int      mxfUInt32;
@@ -253,7 +220,7 @@ typedef unsigned long long int mxfUInt64;
 #define MXFPRIx16 "hx"
 #define MXFPRIx32 "x"
 #define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_GCC_ARM_MACOSX)
+#elif defined(MXF_COMPILER_GCC_ARM64_MACOSX)
 typedef unsigned char          mxfUInt08;
 typedef unsigned short int     mxfUInt16;
 typedef unsigned int           mxfUInt32;
@@ -267,7 +234,7 @@ typedef unsigned long long int mxfUInt64;
 #define MXFPRIx16 "hx"
 #define MXFPRIx32 "x"
 #define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_GCC_PPC_LINUX)
+#elif defined(MXF_COMPILER_GCC_INTEL_MACOSX)
 typedef unsigned char          mxfUInt08;
 typedef unsigned short int     mxfUInt16;
 typedef unsigned long int      mxfUInt32;
@@ -281,7 +248,7 @@ typedef unsigned long long int mxfUInt64;
 #define MXFPRIx16 "hx"
 #define MXFPRIx32 "lx"
 #define MXFPRIx64 "llx"
-#elif defined(MXF_COMPILER_GCC_ARM_LINUX)
+#elif defined(MXF_COMPILER_GCC_PPC_LINUX)
 typedef unsigned char          mxfUInt08;
 typedef unsigned short int     mxfUInt16;
 typedef unsigned long int      mxfUInt32;
@@ -361,6 +328,9 @@ typedef unsigned long long int mxfUInt64;
 
 #include <list>
 #include <map>
+#include <set>
+
+namespace { // unnamed namespace
 
 typedef mxfUInt64 mxfLength;
 typedef mxfUInt08 mxfByte;
@@ -391,6 +361,9 @@ struct aafUID {
   mxfUInt08 Data4[8];
 };
 
+aafUID nullAafUID =
+{0x00000000, 0x0000, 0x0000, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+
 struct mxfRational {
   mxfUInt32 numerator;
   mxfUInt32 denominator;
@@ -410,6 +383,14 @@ Mode mode = unspecifiedMode;
 
 mxfKey nullMxfKey = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+#if defined(_MSC_VER) && (_MSC_VER <= 1200)
+#define NULLMXFKEY {0}
+#define NULLAAFUID {0}
+#else
+#define NULLMXFKEY nullMxfKey
+#define NULLAAFUID nullAafUID
+#endif
+
 bool reorder(void);
 mxfUInt08 hostByteOrder(void);
 
@@ -417,9 +398,6 @@ mxfUInt08 hostByteOrder(void);
 #if defined(MXF_OS_WINDOWS)
 #include <windows.h>
 typedef HANDLE mxfFile;
-#elif defined(MXF_OS_MACOSX) && defined(__i386__)
-#include <CoreServices/CoreServices.h>
-typedef SInt16 mxfFile;
 #else
 typedef FILE* mxfFile;
 #endif
@@ -427,7 +405,7 @@ typedef FILE* mxfFile;
 int mxfExitStatus(int status);
 
 mxfFile openExistingRead(char* fileName);
-void close(mxfFile infile);
+void closeFile(mxfFile infile);
 void setPosition(mxfFile infile, const mxfUInt64 position);
 mxfUInt64 position(mxfFile infile);
 size_t read(mxfFile infile, void* buffer, size_t count);
@@ -525,12 +503,19 @@ bool lookupAAFKey(mxfKey& k, size_t& index);
 bool findAAFKey(mxfKey& k, size_t& index, char** flag);
 
 bool lookupMXFLocalKey(mxfLocalKey& k, size_t& index);
+bool lookupMXFPropertyKey(const mxfKey& k, size_t& index);
+void updateMXFLocalKey(const mxfKey& key, const mxfLocalKey localKey);
 void checkLocalKeyTable(void);
 bool lookupAAFLocalKey(mxfLocalKey& k, size_t& index);
+bool lookupAAFPropertyKey(const mxfKey& k, size_t& index);
+void updateAAFLocalKey(const mxfKey& key, const mxfLocalKey localKey);
 void checkAAFLocalKeyTable(void);
 
 const char* aafKeyName(const mxfKey& k);
 const char* mxfKeyName(const mxfKey& k);
+
+const char* mxfLocalKeyName(mxfLocalKey& k);
+const char* aafLocalKeyName(mxfLocalKey& k);
 
 bool isEssenceElement(mxfKey& k);
 
@@ -718,6 +703,7 @@ char* programName(void)
 }
 
 mxfUInt32 errors = 0;
+const mxfUInt32 maxErrors = 100;
 
 void mxfError(const char* format, ...)
 {
@@ -731,7 +717,7 @@ void vmxfError(const char* format, va_list ap)
 {
   verror(format, ap);
   errors = errors + 1;
-  if (errors >= 100) {
+  if (errors >= maxErrors) {
     error("Too many errors (%" MXFPRIu32 ") encountered - giving up.\n", errors);
     exit(mxfExitStatus(EXIT_FAILURE));
   }
@@ -873,6 +859,8 @@ mxfUInt32 maxIndex = 0;
 bool lFlag = false;      // if true, limit/no-limit specified on command line
 bool limitBytes = false; // if true, only print limit bytes
 mxfUInt32 limit = 0;
+bool dumpANC = false; // if true, dump the contents of ANC Frame Elements
+
 mxfUInt32 runInLimit = 64 * 1024;
 
 
@@ -880,9 +868,10 @@ mxfUInt32 runInLimit = 64 * 1024;
 bool hFlag = false;
 
 #if defined(MXF_OS_WINDOWS)
+
 mxfFile openExistingRead(char* fileName)
 {
-  HANDLE result = CreateFile(fileName,
+  HANDLE result = CreateFileA(fileName,
                              GENERIC_READ,
                              FILE_SHARE_READ | FILE_SHARE_WRITE,
                              0,
@@ -895,7 +884,7 @@ mxfFile openExistingRead(char* fileName)
   return result;
 }
 
-void close(mxfFile infile)
+void closeFile(mxfFile infile)
 {
   BOOL result = CloseHandle(infile);
   if (!result) {
@@ -915,8 +904,9 @@ void setPosition(mxfFile infile, const mxfUInt64 position)
 
 size_t read(mxfFile infile, void* buffer, size_t count)
 {
+  DWORD byteCount = static_cast<DWORD>(count);
   DWORD bytesRead;
-  BOOL result = ReadFile(infile, buffer, count, &bytesRead, 0);
+  BOOL result = ReadFile(infile, buffer, byteCount, &bytesRead, 0);
   if (!result) {
     fatalError("ReadFile() failed.\n");
   }
@@ -948,77 +938,6 @@ mxfUInt64 size(mxfFile infile)
   return result;
 }
 
-#elif defined(MXF_OS_MACOSX) && defined(__i386__)
-mxfFile openExistingRead(char* fileName)
-{
-  const UInt8* name = reinterpret_cast<UInt8*>(fileName);
-  FSRef fref;
-  OSErr status = FSPathMakeRef(name, &fref, 0);
-  if (status != noErr) {
-    fatalError("FSPathMakeRef() failed (%d).\n", status);
-  }
-  HFSUniStr255 fkName;
-  status = FSGetDataForkName(&fkName);
-  if (status != noErr) {
-    fatalError("FSGetDataForkName() failed (%d).\n", status);
-  }
-  SInt16 result;
-  status = FSOpenFork(&fref, fkName.length, fkName.unicode, fsRdPerm, &result);
-  if (status != noErr) {
-    fatalError("FSOpenFork() failed (%d).\n", status);
-  }
-  return result;
-}
-
-void close(mxfFile infile)
-{
-  OSErr status = FSCloseFork(infile);
-  if (status != noErr) {
-    fatalError("FSCloseFork() failed (%d).\n", status);
-  }
-}
-
-void setPosition(mxfFile infile, const mxfUInt64 position)
-{
-  SInt64 pos = position;
-  OSErr status = FSSetForkPosition(infile, fsFromStart, pos);
-  if (status != noErr) {
-    fatalError("FSSetForkPosition() failed (%d).\n", status);
-  }
-}
-
-size_t read(mxfFile infile, void* buffer, size_t count)
-{
-  ByteCount bytesRead;
-  OSErr status = FSReadFork(infile, fsAtMark, 0, count, buffer, &bytesRead);
-  if ((status != eofErr) && (status != noErr)) {
-    fatalError("FSReadFork() failed (%d).\n", status);
-  }
-  return bytesRead;
-}
-
-mxfUInt64 position(mxfFile infile)
-{
-  SInt64 position;
-  OSErr status = FSGetForkPosition(infile, &position);
-  if (status != noErr) {
-    fatalError("FSGetForkPosition() failed (%d).\n", status);
-  }
-  mxfUInt64 result = position;
-  return result;
-}
-
-mxfUInt64 size(mxfFile infile)
-{
-  SInt64 size;
-  OSErr status = FSGetForkSize(infile, &size);
-  if (status != noErr) {
-    fatalError("FSGetForkSize() failed (%d).\n", status);
-  }
-  mxfUInt64 result = size;
-  return result;
-}
-
 #else
 
 #if defined(__GLIBC__) && defined(__GNUC_MINOR__)
@@ -1033,7 +952,7 @@ mxfFile openExistingRead(char* fileName)
   return  fopen(fileName, "rb");
 }
 
-void close(mxfFile infile)
+void closeFile(mxfFile infile)
 {
   fclose(infile);
 }
@@ -1049,6 +968,10 @@ void seek64(mxfFile infile, const mxfUInt64 position, int whence)
 #elif defined(MXF_COMPILER_MWERKS_PPC_MACOSX)
   int status = _fseek(infile, position, whence);
 #elif defined(MXF_COMPILER_GCC_PPC_MACOSX)
+  int status = fseeko(infile, position, whence);
+#elif defined(MXF_COMPILER_GCC_INTEL_MACOSX)
+  int status = fseeko(infile, position, whence);
+#elif defined(MXF_COMPILER_GCC_INTEL_X86_64_MACOSX)
   int status = fseeko(infile, position, whence);
 #elif defined(MXF_COMPILER_SGICC_MIPS_SGI)
   int status = fseeko64(infile, position, whence);
@@ -1085,6 +1008,10 @@ mxfUInt64 tell64(mxfFile infile)
 #elif defined(MXF_COMPILER_MWERKS_PPC_MACOSX)
   mxfUInt64 result = _ftell(infile);
 #elif defined(MXF_COMPILER_GCC_PPC_MACOSX)
+  mxfUInt64 result = ftello(infile);
+#elif defined(MXF_COMPILER_GCC_INTEL_MACOSX)
+  mxfUInt64 result = ftello(infile);
+#elif defined(MXF_COMPILER_GCC_INTEL_X86_64_MACOSX)
   mxfUInt64 result = ftello(infile);
 #elif defined(MXF_COMPILER_SGICC_MIPS_SGI)
   mxfUInt64 result = ftello64(infile);
@@ -1128,7 +1055,7 @@ bool findPattern(mxfUInt64 currentPosition,
 {
   bool found = false;
   mxfUInt64 pos = currentPosition;
-  int c = 0;
+  size_t c = 0;
   size_t i = 0;
   do {
     mxfByte b;
@@ -1192,7 +1119,7 @@ void skipBytes(const mxfUInt64 byteCount, mxfFile infile)
 
 void readMxfUInt08(mxfByte& b, mxfFile infile)
 {
-  int c = read(infile, &b, sizeof(mxfByte));
+  size_t c = read(infile, &b, sizeof(mxfByte));
   if (c != sizeof(mxfByte)) {
     fatalError("Failed to read byte.\n");
   }
@@ -1200,7 +1127,7 @@ void readMxfUInt08(mxfByte& b, mxfFile infile)
 
 void readMxfUInt16(mxfUInt16& i, mxfFile infile)
 {
-  int c = read(infile, &i, sizeof(mxfUInt16));
+  size_t c = read(infile, &i, sizeof(mxfUInt16));
   if (c != sizeof(mxfUInt16)) {
     fatalError("Failed to read mxfUInt16.\n");
   }
@@ -1211,7 +1138,7 @@ void readMxfUInt16(mxfUInt16& i, mxfFile infile)
 
 void readMxfUInt32(mxfUInt32& i, mxfFile infile)
 {
-  int c = read(infile, &i, sizeof(mxfUInt32));
+  size_t c = read(infile, &i, sizeof(mxfUInt32));
   if (c != sizeof(mxfUInt32)) {
     fatalError("Failed to read mxfUInt32.\n");
   }
@@ -1222,7 +1149,7 @@ void readMxfUInt32(mxfUInt32& i, mxfFile infile)
 
 void readMxfUInt64(mxfUInt64& i, mxfFile infile)
 {
-  int c = read(infile, &i, sizeof(mxfUInt64));
+  size_t c = read(infile, &i, sizeof(mxfUInt64));
   if (c != sizeof(mxfUInt64)) {
     fatalError("Failed to read mxfUInt64.\n");
   }
@@ -1239,7 +1166,7 @@ void readMxfRational(mxfRational& r, mxfFile infile)
 
 void readMxfLabel(mxfKey& k, mxfFile infile)
 {
-  int c = read(infile, &k, sizeof(mxfKey));
+  size_t c = read(infile, &k, sizeof(mxfKey));
   if (c != sizeof(mxfKey)) {
     fatalError("Failed to read label.\n");
   }
@@ -1248,7 +1175,7 @@ void readMxfLabel(mxfKey& k, mxfFile infile)
 void readMxfKey(mxfKey& k, mxfFile infile)
 {
   keyPosition = position(infile);
-  int c = read(infile, &k, sizeof(mxfKey));
+  size_t c = read(infile, &k, sizeof(mxfKey));
   if (c != sizeof(mxfKey)) {
     fatalError("Failed to read key.\n");
   }
@@ -1258,7 +1185,7 @@ bool readOuterMxfKey(mxfKey& k, mxfFile infile)
 {
   bool result = true;
   keyPosition = position(infile);
-  int c = read(infile, &k, sizeof(mxfKey));
+  size_t c = read(infile, &k, sizeof(mxfKey));
   if (c == sizeof(mxfKey)) {
     result = true;
   } else if (c == 0) {
@@ -2139,22 +2066,22 @@ void printPrivateLabelName(mxfKey& k, FILE* outfile)
   const char* name = "Unknown organization";
   switch (organization) {
   case 1:
-    name = "DOD";
+    name = "MISB Systems";
     break;
   case 2:
-    name = "UAV";
+    name = "ASPA";
     break;
   case 3:
-    name = "RQ1A";
+    name = "MISB Classified";
     break;
   case 4:
-    name = "Avid";
+    name = "Avid Technology, Inc.";
     break;
   case 5:
     name = "CNN";
     break;
   case 6:
-    name = "Sony";
+    name = "Sony Corporation";
     break;
   case 7:
     name = "IdeasUnlimited.TV";
@@ -2164,6 +2091,24 @@ void printPrivateLabelName(mxfKey& k, FILE* outfile)
     break;
   case 9:
     name = "Dolby Laboratories Inc.";
+    break;
+  case 10:
+    name = "Snell & Wilcox";
+    break;
+  case 11:
+    name = "Omneon Video Networks";
+    break;
+  case 12:
+    name = "Ascent Media Group, Inc.";
+    break;
+  case 13:
+    name = "Quantel Ltd";
+    break;
+  case 14:
+    name = "Panasonic";
+    break;
+  case 15:
+    name = "Grass Valley, Inc.";
     break;
   }
   fprintf(outfile, "Private - %s", name);
@@ -2193,6 +2138,7 @@ void addLabel(node* n, mxfUInt16 key, const char* suffix);
 void addNode(node* n);
 void initEssenceContainerLabelMap(void);
 void decode(mxfUInt16 tag1, mxfUInt32 tag2, FILE* outfile);
+bool isEssenceContainerLabel(mxfKey& key);
 void printEssenceContainerLabelName(mxfKey& label, FILE* outfile);
 void decode(mxfKey& label, FILE* outfile);
 void printEssenceContainerLabel(mxfKey& label, mxfUInt32 index, FILE* outfile);
@@ -2254,16 +2200,24 @@ void decode(mxfKey& label, FILE* outfile)
   decode(tag1, tag2, outfile);
 }
 
-mxfByte eclPfx1[]    = {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x01,
-                        0x0d, 0x01, 0x03, 0x01};
-mxfByte eclPfx2[]    = {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x02,
-                        0x0d, 0x01, 0x03, 0x01};
+mxfByte eclPfx[] = {0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01,
+                    0x00, // the version byte is ignored during comparison
+                    0x0d, 0x01, 0x03, 0x01};
+
+bool isEssenceContainerLabel(mxfKey& label)
+{
+  eclPfx[7] = label.octet7; // Will ignore the version byte
+  bool result = false;
+  if (memcmp(&label, &eclPfx, sizeof(eclPfx)) == 0) {
+    result = true;
+  }
+  eclPfx[7] = 0; // Make the version byte invalid again
+  return result;
+}
 
 void printEssenceContainerLabelName(mxfKey& label, FILE* outfile)
 {
-  if (memcmp(&label, &eclPfx1, sizeof(eclPfx1)) == 0) {
-    decode(label, outfile);
-  } else if (memcmp(&label, &eclPfx2, sizeof(eclPfx2)) == 0) {
+  if (isEssenceContainerLabel(label)) {
     decode(label, outfile);
   } else if (isPrivateLabel(label)) {
     printPrivateLabelName(label, outfile);
@@ -2329,16 +2283,12 @@ const mxfKey V10IndexTableSegment =
 const mxfKey SystemMetadata =
   {0x06, 0x0e, 0x2b, 0x34, 0x02, 0x05, 0x01, 0x01,
    0x0d, 0x01, 0x03, 0x01, 0x04, 0x01, 0x01, 0x00};
+const mxfKey V1KLVFill =
+  {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x01,
+   0x03, 0x01, 0x02, 0x10, 0x01, 0x00, 0x00, 0x00};
 const mxfKey BogusFill =
   {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x01,
    0x03, 0x01, 0x02, 0x10, 0x01, 0x01, 0x01, 0x00};
-//
-const mxfKey MXFAES3AudioEssenceDescriptor =
-  {0x06, 0x0e, 0x2b, 0x34, 0x02, 0x53, 0x01, 0x01,
-   0x0d, 0x01, 0x01, 0x01, 0x01, 0x01, 0x47, 0x00};
-const mxfKey MXFMPEG2VideoDescriptor =
-  {0x06, 0x0e, 0x2b, 0x34, 0x02, 0x53, 0x01, 0x01,
-   0x0d, 0x01, 0x01, 0x01, 0x01, 0x01, 0x51, 0x00};
 //
 const mxfKey ObjectDirectory =
   {0x96, 0x13, 0xb3, 0x8a, 0x87, 0x34, 0x87, 0x46,
@@ -2363,10 +2313,10 @@ struct Key {
   {"V10RandomIndexMetadata", &V10RandomIndexMetadata},
   {"V10IndexTableSegment", &V10IndexTableSegment},
   {"SystemMetadata", &SystemMetadata},
+  // Although technically invalid, the version 1 Fill key is widely used.
+  // Let the dumper show it as regular Fill item.
+  {"KLVFill", &V1KLVFill},
   {"BogusFill", &BogusFill},
-  //
-  {"MXFAES3AudioEssenceDescriptor", &MXFAES3AudioEssenceDescriptor},
-  {"MXFMPEG2VideoDescriptor", &MXFMPEG2VideoDescriptor},
   //
   {"ObjectDirectory", &ObjectDirectory},
   {"MetaDictionary", &MetaDictionary},
@@ -2376,28 +2326,31 @@ struct Key {
 
 size_t mxfKeyTableSize = (sizeof(mxfKeyTable)/sizeof(mxfKeyTable[0])) - 1;
 
+#define MXF_LABEL(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
+                 {a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p}
 #define MXF_PROPERTY(name, id, tag, type, mandatory, isuid, container) \
-{#name, tag},
+{#name, tag, id},
 
 struct MXFLocalKey {
   const char* _name;
-  mxfUInt16 _key;
+  mxfLocalKey _localKey;
+  mxfKey _key;
 } mxfLocalKeyTable [] = {
 #include "MXFMetaDictionary.h"
   // local keys not in MXFMetaDictionary.h
   // Index Table (not a metadata set)
-  {"EditUnitByteCount",    0x3f05},
-  {"IndexSID",             0x3f06},
-  {"BodySID",              0x3f07},
-  {"SliceCount",           0x3f08},
-  {"DeltaEntryArray",      0x3f09},
-  {"IndexEntryArray",      0x3f0a},
-  {"IndexEditRate",        0x3f0b},
-  {"IndexStartPosition",   0x3f0c},
-  {"IndexDuration",        0x3f0d},
-  {"PosTableCount",        0x3f0e},
+  {"EditUnitByteCount",    0x3f05, NULLMXFKEY},
+  {"IndexSID",             0x3f06, NULLMXFKEY},
+  {"BodySID",              0x3f07, NULLMXFKEY},
+  {"SliceCount",           0x3f08, NULLMXFKEY},
+  {"DeltaEntryArray",      0x3f09, NULLMXFKEY},
+  {"IndexEntryArray",      0x3f0a, NULLMXFKEY},
+  {"IndexEditRate",        0x3f0b, NULLMXFKEY},
+  {"IndexStartPosition",   0x3f0c, NULLMXFKEY},
+  {"IndexDuration",        0x3f0d, NULLMXFKEY},
+  {"PosTableCount",        0x3f0e, NULLMXFKEY},
   // Sentinel
-  {"bogus",                0x00}
+  {"bogus",                0x0000, NULLMXFKEY}
 };
 
 size_t mxfLocalKeyTableSize =
@@ -2407,13 +2360,47 @@ bool lookupMXFLocalKey(mxfLocalKey& k, size_t& index)
 {
   bool result = false;
   for (size_t i = 0; i < mxfLocalKeyTableSize; i++) {
-    if (mxfLocalKeyTable[i]._key == k) {
+    if (mxfLocalKeyTable[i]._localKey == k) {
       index = i;
       result = true;
       break;
     }
   }
   return result;
+}
+
+bool lookupMXFPropertyKey(const mxfKey& k, size_t& index)
+{
+  bool result = false;
+  for (size_t i = 0; i < mxfLocalKeyTableSize; i++) {
+    if (memcmp(&mxfLocalKeyTable[i]._key, &k, sizeof(mxfKey)) == 0) {
+      index = i;
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
+void updateMXFLocalKey(const mxfKey& key, const mxfLocalKey localKey)
+{
+  size_t index;
+  bool found = lookupMXFPropertyKey(key, index);
+  if (found) {
+    if (mxfLocalKeyTable[index]._localKey != localKey) {
+      if (mxfLocalKeyTable[index]._localKey == 0x0000) {
+        // Set dynamically allocated local key
+        mxfLocalKeyTable[index]._localKey = localKey;
+      } else {
+        mxfWarning("Cannot remap static local key as specified by Primer Pack "
+                   "(property \"%s\" has local key %04" MXFPRIx16 " in the MXF "
+                   "dictionary and %04" MXFPRIx16 " in the Primer)\n",
+                   mxfLocalKeyTable[index]._name,
+                   mxfLocalKeyTable[index]._localKey,
+                   localKey );
+      }
+    }
+  }
 }
 
 void checkLocalKeyTable(void)
@@ -2423,8 +2410,8 @@ void checkLocalKeyTable(void)
   for (i = 0; i < mxfLocalKeyTableSize; i++) {
     for (j = 0; j < mxfLocalKeyTableSize; j++) {
       if (i != j) {
-        if (mxfLocalKeyTable[i]._key == mxfLocalKeyTable[j]._key) {
-          error("Duplicate keys - %s has the same key as %s.\n",
+        if (mxfLocalKeyTable[i]._localKey == mxfLocalKeyTable[j]._localKey) {
+          error("MXF local key is not unique - %s has the same key as %s.\n",
                 mxfLocalKeyTable[i]._name,
                 mxfLocalKeyTable[j]._name);
         }
@@ -2441,12 +2428,21 @@ void checkLocalKeyTable(void)
 
 #define AAF_CLASS(name, id, parent, concrete) {"AAF"#name, NULLMXFKEY, id},
 
+#if defined(DMS1)
+#define DMS1_CLASS(name, id) {"DMS1"#name, NULLMXFKEY, id},
+#define DMS1_LITERAL_AUID(l, w1, w2,  b1, b2, b3, b4, b5, b6, b7, b8) \
+                         {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}
+#endif
+
 struct AAFKey {
   const char* _name;
   mxfKey _key;
   aafUID _aafKey;
 } aafKeyTable [] = {
 #include "AAFMetaDictionary.h"
+#if defined(DMS1)
+#include "DMS1MetaDictionary.h"
+#endif
   // keys not in AAFMetaDictionary.h
   {"Root", NULLMXFKEY,
 // {B3B398A5-1C90-11d4-8053-080036210804}
@@ -2493,8 +2489,6 @@ struct AAFKey {
 {0x00000000, 0x0000, 0x0000,{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}}
 };
 
-#undef NULLMXFKEY
-
 size_t aafKeyTableSize = (sizeof(aafKeyTable)/sizeof(aafKeyTable[0])) - 1;
 
 int compareKey(const void* k1, const void* k2);
@@ -2534,8 +2528,10 @@ void checkKeyTable(void)
   for (i = 0; i < mxfKeyTableSize; i++) {
     for (j = 0; j < mxfKeyTableSize; j++) {
       if (i != j) {
-        if (memcmp(mxfKeyTable[i]._key, mxfKeyTable[j]._key, sizeof(mxfKey)) == 0) {
-          error("Duplicate keys - %s has the same key as %s.\n",
+        if (memcmp(mxfKeyTable[i]._key,
+                   mxfKeyTable[j]._key,
+                   sizeof(mxfKey)) == 0) {
+          error("MXF key is not unique - %s has the same key as %s.\n",
                 mxfKeyTable[i]._name,
                 mxfKeyTable[j]._name);
         }
@@ -2553,8 +2549,10 @@ void checkAAFKeyTable(void)
   for (i = 0; i < aafKeyTableSize; i++) {
     for (j = 0; j < aafKeyTableSize; j++) {
       if (i != j) {
-        if (memcmp(&aafKeyTable[i]._aafKey, &aafKeyTable[j]._aafKey, sizeof(aafUID)) == 0){
-          error("Duplicate keys - %s has the same key as %s.\n",
+        if (memcmp(&aafKeyTable[i]._aafKey,
+                   &aafKeyTable[j]._aafKey,
+                   sizeof(aafUID)) == 0) {
+          error("AAF key is not unique - %s has the same key as %s.\n",
                 aafKeyTable[i]._name,
                 aafKeyTable[j]._name);
         }
@@ -2765,7 +2763,7 @@ char map(int c)
 unsigned char buffer[16];
 size_t bufferIndex;
 size_t bufferStart;
-size_t align;
+mxfUInt32 align;
 mxfUInt32 address;
 size_t addressBase;
 
@@ -2941,6 +2939,14 @@ void printFormatOptions(void)
 
   fprintf(stderr, "  --diff-friendly     = ");
   fprintf(stderr, "less readable but more useful when diffing mxf files\n");
+
+  fprintf(stderr, "  --show-anc          = ");
+  fprintf(stderr, "dump contents of ANC Frame Elements\n");
+
+  fprintf(stderr, "  --ignore-primer     = ");
+  fprintf(stderr, "do not use Primer Pack for mapping from local keys\n");
+  fprintf(stderr, "                        ");
+  fprintf(stderr, "to their respective UIDs\n");
 }
 
 void printRawOptions(void);
@@ -3213,53 +3219,109 @@ const char* baseName(const char* fullName)
 }
 
 #define AAF_PROPERTY(name, id, tag, type, mandatory, uid, container) \
-{#name, tag},
+{#name, tag, id, NULLMXFKEY},
 
 struct AAFLocalKey {
   const char* _name;
-  mxfUInt16 _key;
+  mxfUInt16 _localKey;
+  aafUID _aafKey;
+  mxfKey _key;
 } aafLocalKeyTable [] = {
 #include "AAFMetaDictionary.h"
   // local keys not in AAFMetaDictionary.h
   // Root
-  {"MetaDictionary",       0x0001},
-  {"Header",               0x0002},
-  {"ObjectDirectory",      0x7f03}, // 0x0003
-  {"FormatVersion",        0x7f04}, // 0x0004
+  {"MetaDictionary",       0x0001, NULLAAFUID, NULLMXFKEY},
+  {"Header",               0x0002, NULLAAFUID, NULLMXFKEY},
+  {"ObjectDirectory",      0x0021, NULLAAFUID, NULLMXFKEY},
+  {"FormatVersion",        0x0022, NULLAAFUID, NULLMXFKEY},
+  // Invalid legacy Root local keys; conflict with SMPTE standard local keys.
+  {"ObjectDirectory",      0x7f03, NULLAAFUID, NULLMXFKEY}, // 0x0003
+  {"FormatVersion",        0x7f04, NULLAAFUID, NULLMXFKEY}, // 0x0004
   // All objects
-  {"InstanceUID",          0x3c0a},
+  {"InstanceUID",          0x3c0a,
+{0x01011502, 0x0000, 0x0000, {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x01}},
+  NULLMXFKEY},
   // Preface
-  {"Primary Package",      0x3b08},
+  {"Primary Package",      0x3b08,
+{0x06010104, 0x0108, 0x0000, {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x04}},
+  NULLMXFKEY},
   // Index Table
-  {"Edit Unit Byte Count", 0x3f05},
-  {"IndexSID",             0x3f06},
-  {"BodySID",              0x3f07},
-  {"Slice Count",          0x3f08},
-  {"Delta Entry Array",    0x3f09},
-  {"Index Entry Array",    0x3f0a},
-  {"Index Edit Rate",      0x3f0b},
-  {"Index Start Position", 0x3f0c},
-  {"Index Duration",       0x3f0d},
-  {"PosTableCount",        0x3f0e},
+  {"Edit Unit Byte Count", 0x3f05, NULLAAFUID, NULLMXFKEY},
+  {"IndexSID",             0x3f06,
+{0x01030405, 0x0000, 0x0000, {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x04}},
+  NULLMXFKEY},
+  {"BodySID",              0x3f07,
+{0x01030404, 0x0000, 0x0000, {0x06, 0x0e, 0x2b, 0x34, 0x01, 0x01, 0x01, 0x04}},
+  NULLMXFKEY},
+  {"Slice Count",          0x3f08, NULLAAFUID, NULLMXFKEY},
+  {"Delta Entry Array",    0x3f09, NULLAAFUID, NULLMXFKEY},
+  {"Index Entry Array",    0x3f0a, NULLAAFUID, NULLMXFKEY},
+  {"Index Edit Rate",      0x3f0b, NULLAAFUID, NULLMXFKEY},
+  {"Index Start Position", 0x3f0c, NULLAAFUID, NULLMXFKEY},
+  {"Index Duration",       0x3f0d, NULLAAFUID, NULLMXFKEY},
+  {"PosTableCount",        0x3f0e, NULLAAFUID, NULLMXFKEY},
   //
   // Sentinel
-  {"bogus",                0x00}
+  {"bogus",                0x0000, NULLAAFUID, NULLMXFKEY}
 };
+
+#undef NULLMXFKEY
 
 size_t aafLocalKeyTableSize =
                     (sizeof(aafLocalKeyTable)/sizeof(aafLocalKeyTable[0])) - 1;
+
+void initAAFLocalKeyTable(void)
+{
+  for (size_t i = 0; i < aafLocalKeyTableSize; i++) {
+    aafUIDToMxfKey(aafLocalKeyTable[i]._key, aafLocalKeyTable[i]._aafKey);
+  }
+}
 
 bool lookupAAFLocalKey(mxfLocalKey& k, size_t& index)
 {
   bool result = false;
   for (size_t i = 0; i < aafLocalKeyTableSize; i++) {
-    if (aafLocalKeyTable[i]._key == k) {
+    if (aafLocalKeyTable[i]._localKey == k) {
       index = i;
       result = true;
       break;
     }
   }
   return result;
+}
+
+bool lookupAAFPropertyKey(const mxfKey& k, size_t& index)
+{
+  bool result = false;
+  for (size_t i = 0; i < aafLocalKeyTableSize; i++) {
+    if (memcmp(&aafLocalKeyTable[i]._key, &k, sizeof(mxfKey)) == 0) {
+      index = i;
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
+void updateAAFLocalKey(const mxfKey& key, const mxfLocalKey localKey)
+{
+  size_t index;
+  bool found = lookupAAFPropertyKey(key, index);
+  if (found) {
+    if (aafLocalKeyTable[index]._localKey != localKey) {
+      if (aafLocalKeyTable[index]._localKey == 0x0000) {
+        // Set dynamically allocated local key
+        aafLocalKeyTable[index]._localKey = localKey;
+      } else {
+        mxfWarning("Cannot remap static local key as specified by Primer Pack "
+                   "(property \"%s\" has local key %04" MXFPRIx16 " in the AAF "
+                   "dictionary and %04" MXFPRIx16 " in the Primer)\n",
+                   mxfLocalKeyTable[index]._name,
+                   mxfLocalKeyTable[index]._localKey,
+                   localKey );
+      }
+    }
+  }
 }
 
 void checkAAFLocalKeyTable(void)
@@ -3269,8 +3331,8 @@ void checkAAFLocalKeyTable(void)
   for (i = 0; i < aafLocalKeyTableSize; i++) {
     for (j = 0; j < aafLocalKeyTableSize; j++) {
       if (i != j) {
-        if (aafLocalKeyTable[i]._key == aafLocalKeyTable[j]._key) {
-          error("Duplicate keys - %s has the same key as %s.\n",
+        if (aafLocalKeyTable[i]._localKey == aafLocalKeyTable[j]._localKey) {
+          error("AAF local key is not unique - %s has the same key as %s.\n",
                 aafLocalKeyTable[i]._name,
                 aafLocalKeyTable[j]._name);
         }
@@ -3279,6 +3341,29 @@ void checkAAFLocalKeyTable(void)
   }
 }
 
+class mxfKeyLess {
+public:
+  bool operator()(const mxfKey& k1, const mxfKey& k2) const;
+};
+
+bool mxfKeyLess::operator()(const mxfKey& k1, const mxfKey& k2) const
+{
+  bool result = false;
+  if (memcmp(&k1, &k2, sizeof(mxfKey)) < 0) {
+    result = true;
+  }
+  return result;
+}
+
+typedef std::set<mxfKey, mxfKeyLess> ObjectSet;
+ObjectSet objects;
+
+typedef std::map<mxfUInt16, mxfKey> PrimerMap;
+PrimerMap primer;
+
+typedef std::set<mxfUInt16> IdSet;
+IdSet badids;
+
 bool symbolic = true;
 
 void printMxfLocalKeySymbol(mxfLocalKey& k, mxfKey& enclosing);
@@ -3286,13 +3371,8 @@ void printMxfLocalKeySymbol(mxfLocalKey& k, mxfKey& enclosing);
 void printMxfLocalKeySymbol(mxfLocalKey& k, mxfKey& enclosing)
 {
   if (isMxfKey(enclosing)) {
-    size_t i;
-    bool found = lookupMXFLocalKey(k, i);
-    if (found) {
-      fprintf(stdout, "%s\n", mxfLocalKeyTable[i]._name);
-    } else {
-      fprintf(stdout, "Dark\n");
-    }
+    const char* name = mxfLocalKeyName(k);
+    fprintf(stdout, "%s\n", name);
   } else {
     fprintf(stdout, "Dark\n");
   }
@@ -3304,21 +3384,16 @@ void printAAFLocalKeySymbol(mxfLocalKey& k, mxfKey& enclosing)
 {
   if (isAAFKey(enclosing)) {
     mxfLocalKey key = k;
-    const char* name = aafKeyName(enclosing);
-    if (strcmp(name, "Root") == 0) {
+    const char* ename = aafKeyName(enclosing);
+    if (strcmp(ename, "Root") == 0) {
       if (key == 0x0003) {
         key = 0x7f03;
       } else if (key == 0x0004) {
         key = 0x7f04;
       }
     }
-    size_t i;
-    bool found = lookupAAFLocalKey(key, i);
-    if (found) {
-      fprintf(stdout, "%s\n", aafLocalKeyTable[i]._name);
-    } else {
-      fprintf(stdout, "Dark\n");
-    }
+    const char* name = aafLocalKeyName(key);
+    fprintf(stdout, "%s\n", name);
   } else {
     fprintf(stdout, "Dark\n");
   }
@@ -3463,6 +3538,28 @@ const char* aafKeyName(const mxfKey& k)
   bool found = lookupAAFKey(const_cast<mxfKey&>(k), i);
   if (found) {
     result = aafKeyTable[i]._name;
+  }
+  return result;
+}
+
+const char* mxfLocalKeyName(mxfLocalKey& k)
+{
+  const char* result = "Dark";
+  size_t index;
+  bool found = lookupMXFLocalKey(k, index);
+  if (found) {
+    result = mxfLocalKeyTable[index]._name;
+  }
+  return result;
+}
+
+const char* aafLocalKeyName(mxfLocalKey& k)
+{
+  const char* result = "Dark";
+  size_t index;
+  bool found = lookupAAFLocalKey(k, index);
+  if (found) {
+    result = aafLocalKeyTable[index]._name;
   }
   return result;
 }
@@ -3669,6 +3766,24 @@ const char* GCPictureElementTypeName(mxfByte type)
     result = "Uncompressed (Clip Wrapped)";
   } else if (type == 0x04) {
     result = "Uncompressed (Line Wrapped)";
+  } else if (type == 0x05) {
+    result = "Frame Wrapped";
+  } else if (type == 0x06) {
+    result = "Clip Wrapped";
+  } else if (type == 0x07) {
+    result = "Custom Wrapped";
+  } else if (type == 0x08) {
+    result = "Frame-wrapped JPEG 2000 Picture Element";
+  } else if (type == 0x09) {
+    result = "Clip-wrapped JPEG 2000 Picture Element";
+  } else if (type == 0x0a) {
+    result = "VC-1 Picture Element (Frame Wrapped)";
+  } else if (type == 0x0b) {
+    result = "VC-1 Picture Element (Clip Wrapped)";
+  } else if (type == 0x0c) {
+    result = "VC-3 Picture Element (Frame Wrapped)";
+  } else if (type == 0x0d) {
+    result = "VC-3 Picture Element (Clip Wrapped)";
   } else if ((type < 0x01) || (type > 0x7f)) {
     result = "Illegal";
   }
@@ -3737,7 +3852,11 @@ const char* GCDataElementTypeName(mxfByte type);
 const char* GCDataElementTypeName(mxfByte type)
 {
   const char* result = "Unknown Data";
-  if ((type < 0x01) || (type > 0x7f)) {
+  if (type == 0x01) {
+    result = "VBI Data Element (Frame Wrapped)";
+  } else if (type == 0x02) {
+    result = "ANC Data Element (Frame Wrapped)";
+  } else if ((type < 0x01) || (type > 0x7f)) {
     result = "Illegal";
   }
   return result;
@@ -3892,6 +4011,17 @@ bool isEssenceElement(mxfKey& k)
   return result;
 }
 
+bool isANCFrameElement(mxfKey& k)
+{
+  bool result;
+  if (isEssenceElement(k) && k.octet12 == 0x17 && k.octet14 == 0x02) {
+    result = true;
+  } else {
+    result = false;
+  }
+  return result;
+}
+
 bool isIndexSegment(mxfKey& k)
 {
   bool result;
@@ -3903,6 +4033,131 @@ bool isIndexSegment(mxfKey& k)
     result = false;
   }
   return result;
+}
+
+bool is8bitANCSampleCoding(mxfUInt08 payloadSampleCoding);
+
+bool is8bitANCSampleCoding(mxfUInt08 payloadSampleCoding)
+{
+  bool result = false;
+  switch (payloadSampleCoding) {
+  case 4:
+  case 5:
+  case 6:
+  case 10:
+  case 11:
+  case 12:
+    result = true;
+    break;
+  default:
+    break;
+  }
+  return result;
+}
+
+void printANCPayloadByteArray(mxfUInt32 entryCount,
+                              mxfUInt32 entrySize,
+                              mxfUInt08 payloadSampleCoding,
+                              bool limitBytes,
+                              mxfUInt32 limit,
+                              mxfFile infile);
+
+void printANCPayloadByteArray(mxfUInt32 entryCount,
+                              mxfUInt32 entrySize,
+                              mxfUInt08 payloadSampleCoding,
+                              bool limitBytes,
+                              mxfUInt32 limit,
+                              mxfFile infile)
+{
+  fprintf(stdout, "        [ Payload ");
+
+  // Print out DID, SDID/DBN and Data Count words of the payload.
+  // Only 8-bit samples are currently supported.
+  mxfLength remaining = entryCount * entrySize;
+  if (is8bitANCSampleCoding(payloadSampleCoding) && remaining > 3) {
+    // Peek at the first 3 bytes
+    const mxfUInt64 payloadStart = position(infile);
+    mxfUInt08 did;
+    mxfUInt08 sdid;
+    mxfUInt08 dataCount;
+    readMxfUInt08(did, infile);
+    readMxfUInt08(sdid, infile);
+    readMxfUInt08(dataCount, infile);
+    setPosition(infile, payloadStart);
+  
+    fprintf(stdout, "DID = ");
+    printHexFieldPad(stdout, did);
+    fprintf(stdout, ", SDID/DBN = ");
+    printHexFieldPad(stdout, sdid);
+    fprintf(stdout, ", Data Count = ");
+    printHexFieldPad(stdout, dataCount);
+  }
+
+  fprintf(stdout, " ]\n");
+
+  // Print out payload bytes
+  printV(remaining, limitBytes, limit, infile);
+}
+
+void printANCFrameElement(mxfLength& length,
+                         bool limitBytes,
+                         mxfUInt32 limit,
+                         mxfFile infile);
+
+void printANCFrameElement(mxfLength& length,
+                         bool limitBytes,
+                         mxfUInt32 limit,
+                         mxfFile infile)
+{
+  mxfLength remainder = length;
+  while (remainder > 0) {
+    mxfUInt16 numberOfANCPackets;
+    readMxfUInt16(numberOfANCPackets, infile);
+    remainder = remainder - 2;
+    fprintf(stdout, "    Number of ANC Packets = ");
+    printHexFieldPad(stdout, numberOfANCPackets);
+    fprintf(stdout, "\n");
+
+    for (mxfUInt16 i = 0; i < numberOfANCPackets; i++) {
+
+      fprintf(stdout, "    [");
+      printDecField(stdout, i);
+      fprintf(stdout, " : ANC Packet]\n");
+
+      mxfUInt16 lineNumber;
+      readMxfUInt16(lineNumber, infile);
+      remainder = remainder - 2;
+      printMxfUInt16(stdout, "Line Number", lineNumber);
+
+      mxfUInt08 wrappingType;
+      readMxfUInt08(wrappingType, infile);
+      remainder = remainder - 1;
+      printMxfUInt08(stdout, "Wrapping Type", wrappingType);
+
+      mxfUInt08 payloadSampleCoding;
+      readMxfUInt08(payloadSampleCoding, infile);
+      remainder = remainder - 1;
+      printMxfUInt08(stdout, "Sample Coding", payloadSampleCoding);
+
+      mxfUInt16 payloadSampleCount;
+      readMxfUInt16(payloadSampleCount, infile);
+      remainder = remainder - 2;
+      printMxfUInt16(stdout, "Sample Count", payloadSampleCount);
+
+      mxfUInt32 ancPayloadEntryCount;
+      mxfUInt32 ancPayloadEntrySize;
+      readMxfUInt32(ancPayloadEntryCount, infile);
+      readMxfUInt32(ancPayloadEntrySize, infile);
+      remainder = remainder - 8;
+      printANCPayloadByteArray(ancPayloadEntryCount,
+                               ancPayloadEntrySize,
+                               payloadSampleCoding,
+                               limitBytes,
+                               limit,
+                               infile);
+      remainder = remainder - (ancPayloadEntryCount * ancPayloadEntrySize);
+    }
+  }
 }
 
 void printEssenceKL(mxfKey& k, mxfLength& len);
@@ -4019,7 +4274,7 @@ void printEssenceFrames(mxfKey& k,
     total = total + lengthLen;
 
     fprintf(stdout, "[ llen = %d ]", llen);
-
+    
     if (isFill(k)) {
       printEssenceFrameFill(k, len, frameCount, infile);
     } else {
@@ -4050,7 +4305,11 @@ void printEssence(mxfKey& k,
                   mxfFile infile)
 {
   printEssenceKL(k, length);
-  printV(length, limitBytes, limit, infile);
+  if (dumpANC && isANCFrameElement(k)) { // move to printEssenceElement?
+    printANCFrameElement(length, limitBytes, limit, infile);
+  } else {
+    printV(length, limitBytes, limit, infile);
+  }
 }
 
 void printEssenceElement(mxfKey& k,
@@ -4169,9 +4428,11 @@ bool dumpFill = false;
 bool isFill(mxfKey& k)
 {
   bool result;
-  if (memcmp(&KLVFill, &k, sizeof(mxfKey)) == 0 ||
-      memcmp(&LegacyKLVFill, &k, sizeof(mxfKey)) == 0 ||
-      memcmp(&BogusFill, &k, sizeof(mxfKey)) == 0) {
+  if (memcmp(&KLVFill, &k, sizeof(mxfKey)) == 0) {
+    result = true;
+  } else if (memcmp(&V1KLVFill, &k, sizeof(mxfKey)) == 0) {
+    result = true;
+  } else if (memcmp(&BogusFill, &k, sizeof(mxfKey)) == 0) {
     result = true;
   } else {
     result = false;
@@ -4878,8 +5139,7 @@ void checkFill(const mxfKey& key,
                mxfUInt64 keyPosition,
                const mxfKey& previousKey)
 {
-  if (memcmp(&KLVFill, &previousKey, sizeof(mxfKey)) == 0 ||
-      memcmp(&LegacyKLVFill, &previousKey, sizeof(mxfKey)) == 0) {
+  if (memcmp(&KLVFill, &previousKey, sizeof(mxfKey)) == 0) {
     mxfError(key, keyPosition, "Consecutive fill items");
   }
 }
@@ -4914,11 +5174,11 @@ void checkPartition(mxfPartition* p, mxfUInt64 previous, mxfPartition* footer)
              p->_address + headerPosition,
              "MajorVersion");
   // Minor Version
-  if (p->_minorVersion < 2) {
-    mxfWarning(p->_key,
-               p->_address + headerPosition,
-               "MinorVersion expected >= 2,");
-  }
+  checkField(2,
+             p->_minorVersion,
+             p->_key,
+             p->_address + headerPosition,
+             "MinorVersion");
   // KAGSize
   // ThisPartition
   checkField(p->_address,
@@ -5034,8 +5294,6 @@ void destroyPartitions(PartitionList& partitions)
 // OpenBody                    06 0e 2b 34 02 05 01 01 0d 01 02 01 01 03 03 00
 // Body                        06 0e 2b 34 02 05 01 01 0d 01 02 01 01 03 04 00
 //
-// Generic Stream              06 0e 2b 34 02 05 01 01 0d 01 02 01 01 03 11 00
-//
 // IncompleteFooter            06 0e 2b 34 02 05 01 01 0d 01 02 01 01 04 02 00
 // Footer                      06 0e 2b 34 02 05 01 01 0d 01 02 01 01 04 04 00
 //
@@ -5067,8 +5325,6 @@ bool isPartition(mxfKey& key)
   } else if (memcmp(&OpenBody, &key, sizeof(mxfKey)) == 0) {
     result = true;
   } else if (memcmp(&Body, &key, sizeof(mxfKey)) == 0) {
-    result = true;
-  } else if (memcmp(&GenericStream, &key, sizeof(mxfKey)) == 0) {
     result = true;
   } else if (memcmp(&IncompleteFooter, &key, sizeof(mxfKey)) == 0) {
     result = true;
@@ -5121,8 +5377,6 @@ bool isClosed(const mxfKey& key)
     result = true;
   } else if (memcmp(&Body, &key, sizeof(mxfKey)) == 0) {
     result = true;
-  } else if (memcmp(&GenericStream, &key, sizeof(mxfKey)) == 0) {
-    result = true;
   } else if (memcmp(&IncompleteFooter, &key, sizeof(mxfKey)) == 0) {
     result = true;
   } else if (memcmp(&Footer, &key, sizeof(mxfKey)) == 0) {
@@ -5143,8 +5397,6 @@ bool isComplete(const mxfKey& key)
   } else if (memcmp(&OpenBody, &key, sizeof(mxfKey)) == 0) {
     result = true;
   } else if (memcmp(&Body, &key, sizeof(mxfKey)) == 0) {
-    result = true;
-  } else if (memcmp(&GenericStream, &key, sizeof(mxfKey)) == 0) {
     result = true;
   } else if (memcmp(&Footer, &key, sizeof(mxfKey)) == 0) {
     result = true;
@@ -5376,7 +5628,7 @@ void checkRandomIndex(mxfRandomIndex& rip, PartitionList& partitions)
       }
     }
     if (!found) {
-      mxfError("Invalid random index - missing partition",
+      mxfError("Invalid random index - missing partition"
                " (partition address = 0x%" MXFPRIx64 ").\n",
                p->_address);
     }
@@ -5472,13 +5724,6 @@ void printHeaderPartition(mxfKey& k, mxfLength& len, mxfFile infile)
 void printBodyPartition(mxfKey& k, mxfLength& len, mxfFile infile);
 
 void printBodyPartition(mxfKey& k, mxfLength& len, mxfFile infile)
-{
-  printPartition(k, len, infile);
-}
-
-void printGenericStreamPartition(mxfKey& k, mxfLength& len, mxfFile infile);
-
-void printGenericStreamPartition(mxfKey& k, mxfLength& len, mxfFile infile)
 {
   printPartition(k, len, infile);
 }
@@ -5664,6 +5909,13 @@ void readIndexSegment(mxfIndexSegment* index, mxfLength& len, mxfFile infile)
       skipBytes(size, infile);
       remainder = remainder - size;
       index->_hasDeltaEntryArray = true;
+	} else if ((identifier == 0x0000) && (length == 0x0000)) {
+      mxfError(currentKey,
+               keyPosition,
+               "Local key and length are zero, skipping %" MXFPRIu64 " bytes.",
+               remainder);
+      skipBytes(remainder, infile);
+      remainder = 0;
     } else {
       mxfError(currentKey,
                keyPosition,
@@ -5724,7 +5976,6 @@ void printIndexSegment(mxfIndexSegment* index)
     printMxfUInt08(stdout, "Pos Table Count", index->_posTableCount);
   }
 }
-
 
 void validateArray(mxfUInt32 defaultSize,
                    mxfUInt32 expectedSize,
@@ -5885,10 +6136,17 @@ void dumpIndexEntryArray(mxfUInt32 entryCount,
   fprintf(stdout, " ]\n");
 
   if (entryCount > 0) {
-    fprintf(stdout, "         ");
-    fprintf(stdout, "        Temporal   Anchor  Flags        Stream\n");
-    fprintf(stdout, "         ");
-    fprintf(stdout, "          Offset   Offset               Offset\n");
+    if (sliceCount > 0) {
+      fprintf(stdout, "         ");
+      fprintf(stdout, "        Temporal   Anchor  Flags        Stream        Slice\n");
+      fprintf(stdout, "         ");
+      fprintf(stdout, "          Offset   Offset               Offset      Offsets\n");
+    } else {
+      fprintf(stdout, "         ");
+      fprintf(stdout, "        Temporal   Anchor  Flags        Stream\n");
+      fprintf(stdout, "         ");
+      fprintf(stdout, "          Offset   Offset               Offset\n");
+    }
   }
 
   mxfUInt32 count = 0;
@@ -5901,6 +6159,13 @@ void dumpIndexEntryArray(mxfUInt32 entryCount,
     readMxfUInt08(flags, infile);
     mxfUInt64 streamOffset;
     readMxfUInt64(streamOffset, infile);
+
+    mxfUInt32* sliceOffsets = new mxfUInt32[sliceCount];
+    for (mxfUInt32 s = 0; s < sliceCount; s++) {
+      mxfUInt32 sliceOffset;
+      readMxfUInt32(sliceOffset, infile);
+      sliceOffsets[s] = sliceOffset;
+    }
 
     if (!cFlag || (i < maxIndex)) {
       fprintf(stdout, "    ");
@@ -5917,11 +6182,28 @@ void dumpIndexEntryArray(mxfUInt32 entryCount,
       printDecField(stdout, streamOffset);
       fprintf(stdout, "\n");
 
-      for (mxfUInt32 s = 0; s < sliceCount; s++) {
-        mxfUInt32 sliceOffset;
-        readMxfUInt32(sliceOffset, infile);
-        // Not yet printed
+      // Slice offsets
+      if (sliceCount > 0) {
+        // The first slice offset is on the same line as
+        // the other of the index entry fields.
+        fprintf(stdout, "     ");
+        printDecField(stdout, sliceOffsets[0]);
+        fprintf(stdout, "\n");
+
+        // The rest of the slice offsets
+        for (mxfUInt32 s = 1; s < sliceCount; s++) {
+          fprintf(stdout,
+                 "                                                          ");
+          printDecField(stdout, sliceOffsets[s]);
+          fprintf(stdout, "\n");
+        }
+      } else {
+        fprintf(stdout, "\n");
       }
+
+      delete [] sliceOffsets;
+      sliceOffsets = 0;
+
       count = count + 1;
     }
   }
@@ -6046,6 +6328,7 @@ void checkPrimerLength(mxfUInt64& length)
   }
 }
 
+bool usePrimer = true;
 bool diffFriendly = false;
 
 void printPrimer(mxfKey& k, mxfLength& len, mxfFile infile);
@@ -6088,6 +6371,10 @@ void printPrimer(mxfKey& /* k */, mxfLength& len, mxfFile infile)
     readMxfLocalKey(identifier, infile);
     mxfKey longIdentifier;
     readMxfLabel(longIdentifier, infile);
+    if (usePrimer) {
+      updateMXFLocalKey(longIdentifier, identifier);
+      updateAAFLocalKey(longIdentifier, identifier);
+    }
     fprintf(stdout, "  ");
     printMxfLocalKey(identifier, stdout);
     if (diffFriendly) {
@@ -6353,8 +6640,6 @@ void mxfDumpKLV(mxfKey& k, mxfLength& len, mxfFile infile)
     printBodyPartition(k, len, infile);
   } else if (memcmp(&Body, &k, sizeof(mxfKey)) == 0) {
     printBodyPartition(k, len, infile);
-  } else if (memcmp(&GenericStream, &k, sizeof(mxfKey)) == 0) {
-    printGenericStreamPartition(k, len, infile);
   } else if (memcmp(&IncompleteFooter, &k, sizeof(mxfKey)) == 0) {
     printFooterPartition(k, len, infile);
   } else if (memcmp(&Footer, &k, sizeof(mxfKey)) == 0) {
@@ -6530,6 +6815,131 @@ void validateLocalSet(mxfKey& /* k */, mxfLength& len, mxfFile infile)
   }
 }
 
+void validateObject(mxfKey& k, mxfLength& len, mxfFile infile);
+
+void validateObject(mxfKey& /* k */, mxfLength& len, mxfFile infile)
+{
+  mxfLength remainder = len;
+  while (remainder > 0) {
+    // Key (local identifier)
+    mxfLocalKey identifier;
+    mxfLength excess = remainder;
+    validateLocalKey(identifier, remainder, infile);
+    if (remainder == 0) {
+      skipBytes(excess, infile);
+      break;
+    }
+    // Check that this id is in the primer
+    PrimerMap::const_iterator piter = primer.find(identifier);
+    if (piter == primer.end()) {
+      IdSet::const_iterator iditer = badids.find(identifier);
+      if (iditer == badids.end()) {
+        badids.insert(identifier);
+        mxfError(currentKey,
+                 keyPosition,
+                 "Local key %04" MXFPRIx16 " not found in primer, "
+                 "reporting first instance only",
+                 identifier);
+      }
+    }
+
+    // Length
+    mxfUInt16 length;
+    excess = remainder;
+    validateLocalLength(length, remainder, infile);
+    if (remainder == 0) {
+      skipBytes(excess, infile);
+      break;
+    }
+
+    // Value
+    mxfUInt16 vLength = validateLocalV(length, remainder, infile);
+    if (identifier == 0x3c0a) {
+      if (vLength == sizeof(mxfKey)) {
+        mxfKey oid;
+        readMxfLabel(oid, infile);
+        std::pair<ObjectSet::const_iterator, bool> r = objects.insert(oid);
+        if (!r.second) {
+          mxfError(currentKey, keyPosition, "Instance uid is not unique");
+        }
+      } else {
+        mxfError(currentKey, keyPosition, "Incorrect length for instance uid");
+        skipBytes(vLength, infile);
+      }
+    } else {
+      skipBytes(vLength, infile);
+    }
+  }
+}
+
+void validatePrimer(mxfKey& /* k */, mxfLength& len, mxfFile infile)
+{
+  checkPrimerLength(len);
+  mxfUInt32 elementCount;
+  readMxfUInt32(elementCount, infile);
+  mxfUInt32 elementSize;
+  readMxfUInt32(elementSize, infile);
+  checkElementSize(sizeof(mxfUInt16) + sizeof(mxfKey),
+                   elementSize,
+                   elementCount);
+  mxfUInt32 count = checkElementCount(elementCount,
+                                      sizeof(mxfUInt16) + sizeof(mxfKey),
+                                      len,
+                                      primerFixedSize);
+
+  ObjectSet propertyIds;
+  for (mxfUInt32 j = 0; j < count; j++) {
+    mxfLocalKey identifier;
+    readMxfLocalKey(identifier, infile);
+    mxfKey longIdentifier;
+    readMxfLabel(longIdentifier, infile);
+    std::pair<PrimerMap::iterator, bool> r = primer.insert(
+                                        PrimerMap::value_type(identifier,
+                                                              longIdentifier));
+    if (!r.second) {
+      mxfError(currentKey,
+               keyPosition,
+               "Local key %04" MXFPRIx16 " is not unique",
+               identifier);
+    }
+
+    std::pair<ObjectSet::iterator, bool> p = propertyIds.insert(
+                                                               longIdentifier);
+    if (!p.second) {
+      mxfError("Key ");
+      printMxfKey(longIdentifier, stderr);
+      fprintf(stderr, " is not unique");
+      fprintf(stderr,
+              " (following %s key at offset 0x%" MXFPRIx64 ").\n",
+              "Primer",
+              keyPosition);
+    }
+    
+    if (identifier < 0x8000) { // static key 
+      size_t index;
+      bool found = lookupAAFLocalKey(identifier, index);
+      if (found) {
+        if (memcmp(&aafLocalKeyTable[index]._key,
+            &nullMxfKey,
+            sizeof(mxfKey)) == 0) {
+//          warning("Missing key for \"%s\"\n", aafLocalKeyTable[index]._name);
+        } else if (memcmp(&aafLocalKeyTable[index]._key,
+                   &longIdentifier,
+                   sizeof(mxfKey)) != 0) {
+          mxfError("Primer remaps static local key %04" MXFPRIx16 ""
+                   " (\"%s\") from ",
+                   identifier,
+                   aafLocalKeyTable[index]._name);
+          printMxfKey(aafLocalKeyTable[index]._key, stderr);
+          fprintf(stderr, " to ");
+          printMxfKey(longIdentifier, stderr);
+          fprintf(stderr, "\n");
+        }
+      }
+    }
+  }
+}
+
 void setValidate(mxfFile infile);
 
 void setValidate(mxfFile infile)
@@ -6579,7 +6989,11 @@ void mxfValidate(mxfFile infile)
       markMetadataStart(keyPosition);
       checkPrimerLength(length);
       skipV(len, infile);
+      validatePrimer(k, len, infile);
     } else if (isPartition(k)) {
+      objects.clear();
+      primer.clear();
+      badids.clear();
       markMetadataEnd(keyPosition);
       markIndexEnd(keyPosition);
       markEssenceSegmentEnd(keyPosition);
@@ -6589,17 +7003,24 @@ void mxfValidate(mxfFile infile)
         footer = checkFooterPartition(footer, currentPartition);
       }
     } else if (isRandomIndex(k)) {
+      objects.clear();
+      primer.clear();
+      badids.clear();
       markMetadataEnd(keyPosition);
       markIndexEnd(keyPosition);
       mxfUInt32 overall;
       readRandomIndex(rip, k, len, overall, infile);
       checkRandomIndex(keyPosition, position(infile), len, overall, fileSize);
     } else if (isEssenceElement(k) || isSystemElement(k)) {
+      objects.clear();
       markMetadataEnd(keyPosition);
       markIndexEnd(keyPosition);
       markEssenceSegmentStart(currentPartition->_bodySID, keyPosition);
       skipV(len, infile);
     } else if (isIndexSegment(k)) {
+      objects.clear();
+      primer.clear();
+      badids.clear();
       markMetadataEnd(keyPosition);
       markIndexStart(currentPartition->_indexSID, keyPosition);
       validateIndexSegment(k, len, infile);
@@ -6607,10 +7028,15 @@ void mxfValidate(mxfFile infile)
       skipV(len, infile);
       markFill(keyPosition, position(infile));
       checkFill(k, keyPosition, previousKey);
+    } else if (isLocalSet(k)) {
+      validateObject(k, len, infile);
     } else {
       skipV(len, infile);
     }
   }
+  objects.clear();
+  primer.clear();
+  badids.clear();
   markMetadataEnd(fileSize);
   markIndexEnd(fileSize);
 
@@ -6806,6 +7232,8 @@ int mxfExitStatus(int status)
   return result;
 }
 
+} // unnamed namespece
+
 // Summary of options -
 //
 // -k --klv-dump
@@ -6840,7 +7268,8 @@ int mxfExitStatus(int status)
 //    --mxf-validate
 //    --aaf-validate
 //    --statistics
-
+//    --ignore-primer
+//    --show-anc
 // Free letters - goqz
 
 int main(int argumentCount, char* argumentVector[])
@@ -6852,6 +7281,7 @@ int main(int argumentCount, char* argumentVector[])
   setProgramName(argumentVector[0]);
   checkSizes();
   initAAFKeyTable();
+  initAAFLocalKeyTable();
   initEssenceContainerLabelMap();
   int fileCount = 0;
   int fileArg = 0;
@@ -6892,6 +7322,12 @@ int main(int argumentCount, char* argumentVector[])
     } else if (strcmp(p, "--show-run-in") == 0) {
       checkDumpMode(p);
       dumpRunIn = true;
+    } else if (strcmp(p, "--show-anc") == 0) {
+      checkDumpMode(p);
+      dumpANC = true;
+    } else if (strcmp(p, "--ignore-primer") == 0) {
+      checkDumpMode(p);
+      usePrimer = false;
     } else if (strcmp(p, "--search-run-in") == 0) {
       runInLimit = getIntegerOption(i,
                                     argumentCount,
@@ -7108,7 +7544,7 @@ int main(int argumentCount, char* argumentVector[])
   } else if (mode == aafValidateMode) {
     mxfValidateFile(mode, infile);
   }
-  close(infile);
+  closeFile(infile);
 
   return mxfExitStatus(EXIT_SUCCESS);
 }
