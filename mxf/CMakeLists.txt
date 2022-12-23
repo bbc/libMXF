@@ -1,4 +1,4 @@
-add_library(MXF
+set(MXF_sources
     mxf_app.c
     mxf_avid.c
     mxf_avid_dictionary.c
@@ -24,9 +24,6 @@ add_library(MXF
     mxf_utils.c
     mxf_uu_metadata.c
     mxf_version.c
-
-    $<$<BOOL:${WIN32}>:mxf_win32_file.c>
-    $<$<BOOL:${WIN32}>:mxf_win32_mmap.c>
 )
 
 set(MXF_headers
@@ -62,10 +59,20 @@ set(MXF_headers
     mxf_utils.h
     mxf_uu_metadata.h
     mxf_version.h
-
-    $<$<BOOL:${WIN32}>:mxf_win32_file.h>
-    $<$<BOOL:${WIN32}>:mxf_win32_mmap.h>
 )
+
+if(WIN32)
+    list(APPEND MXF_sources
+        mxf_win32_file.c
+        mxf_win32_mmap.c
+    )
+    list(APPEND MXF_headers
+        mxf_win32_file.h
+        mxf_win32_mmap.h
+    )
+endif()
+
+add_library(MXF ${MXF_sources})
 
 target_include_directories(MXF PUBLIC
     ${PROJECT_SOURCE_DIR}
