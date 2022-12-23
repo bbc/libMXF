@@ -118,7 +118,11 @@ set_target_properties(MXF PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-install(TARGETS MXF LIBRARY DESTINATION lib)
+install(TARGETS MXF
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
 install(FILES ${MXF_headers} DESTINATION include/mxf)
 
 if(UNIX)
