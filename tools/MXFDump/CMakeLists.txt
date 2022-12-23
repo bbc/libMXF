@@ -2,6 +2,11 @@ add_executable(MXFDump
     MXFDump.cpp
 )
 
+if(UNIX)
+    # Ignore unsed functions warnings
+    target_compile_options(MXFDump PRIVATE -Wno-unused-function)
+endif()
+
 # APPLE requires link to CoreServices library for functions such as FSOpenFork
 if(APPLE)
     # Use target_link_libraries to add linker options. This is equivalent to
