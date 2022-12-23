@@ -63,7 +63,7 @@ struct FileIndex
     uint32_t bodySID;
 
     MXFList partitionIndex;
-    long currentPartition;
+    size_t currentPartition;
 
     int isComplete;
 
@@ -158,8 +158,8 @@ static int add_partition_index_entry(MXFFile *mxfFile, FileIndex *index, const m
     PartitionIndexEntry *newEntry = NULL;
     PartitionIndexEntry *prevEntry = NULL;
     PartitionIndexEntry *prevEssenceEntry = NULL;
-    long numPartitions;
-    long i;
+    size_t numPartitions;
+    size_t i;
 
 
     /* read the partition pack */
@@ -174,8 +174,9 @@ static int add_partition_index_entry(MXFFile *mxfFile, FileIndex *index, const m
         /* get the previous entry containing essence */
         prevEssenceEntry = NULL;
         numPartitions = mxf_get_list_length(&index->partitionIndex);
-        for (i = numPartitions - 1; i>= 0; i--)
-        {
+        i = numPartitions;
+        while (i > 0) {
+            i--;
             prevEntry = (PartitionIndexEntry*)mxf_get_list_element(&index->partitionIndex, i);
             if (partition_has_essence(index, prevEntry))
             {
@@ -285,9 +286,9 @@ static int position_at_start_essence(MXFFile *mxfFile, FileIndex *index, Partiti
 static int move_to_next_partition_with_essence(MXFFile *mxfFile, FileIndex *index)
 {
     PartitionIndexEntry *entry = NULL;
-    long nextPartition = -1;
-    long numPartitions;
-    long i;
+    size_t nextPartition = (size_t)(-1);
+    size_t numPartitions;
+    size_t i;
     mxfKey key;
     uint8_t llen;
     uint64_t len;
@@ -305,7 +306,7 @@ static int move_to_next_partition_with_essence(MXFFile *mxfFile, FileIndex *inde
         }
     }
 
-    if (nextPartition == -1 && index->isComplete)
+    if (nextPartition == (size_t)(-1) && index->isComplete)
     {
         /* no next partition with essence found in a complete index */
         return 0;
@@ -313,7 +314,7 @@ static int move_to_next_partition_with_essence(MXFFile *mxfFile, FileIndex *inde
     else
     {
         /* move to next partition */
-        if (nextPartition != -1)
+        if (nextPartition != (size_t)(-1))
         {
             index->currentPartition = nextPartition;
             entry = (PartitionIndexEntry*)mxf_get_list_element(&index->partitionIndex, index->currentPartition);
@@ -380,8 +381,8 @@ static int complete_partition_index(MXFFile *mxfFile, FileIndex *index)
     mxfKey key;
     uint8_t llen;
     uint64_t len;
-    long i;
-    long numPartitions;
+    size_t i;
+    size_t numPartitions;
 
 
     /* get the content package length and first element key */
@@ -537,7 +538,7 @@ int set_position(MXFFile *mxfFile, FileIndex *index, mxfPosition position)
 {
     PartitionIndexEntry *entry = NULL;
     PartitionIndexEntry *nextEntry = NULL;
-    long numPartitions;
+    size_t numPartitions;
     mxfKey key;
     uint8_t llen;
     uint64_t len;

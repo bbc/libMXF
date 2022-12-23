@@ -283,7 +283,7 @@ static int preprocess_avid_input(AvidMXFToP2Transfer *transfer, int inputFileInd
     mxfUMID avid_fileSourcePackageUID;
     mxfUMID umid;
     int foundIt = 0;
-    uint32_t essenceContainerLen;
+    size_t essenceContainerLen;
     mxfUL *essenceContainerLabel;
     MXFListIterator listIter;
 
