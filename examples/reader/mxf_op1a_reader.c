@@ -40,6 +40,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include "mxf_reader_int.h"
 #include "mxf_op1a_reader.h"
@@ -785,6 +786,9 @@ static int ns_read_content_package(MXFReader *reader, int skip, MXFReaderListene
     llen = nsIndex->nextLLen;
     len = nsIndex->nextLen;
 
+    /* The implementation below only supports a 32-bit size */
+    CHK_ORET(len <= UINT32_MAX);
+
     cpCount = mxfKey_extlen + llen;
 
     /* process essence elements in content package */
@@ -798,9 +802,9 @@ static int ns_read_content_package(MXFReader *reader, int skip, MXFReaderListene
                 /* send data to listener */
                 if (accept_frame(listener, trackIndex))
                 {
-                    if (listener && listener->allocate_buffer(listener, trackIndex, &buffer, len))
+                    if (listener && listener->allocate_buffer(listener, trackIndex, &buffer, (uint32_t)len))
                     {
-                        CHK_ORET(mxf_file_read(mxfFile, buffer, len) == len);
+                        CHK_ORET(mxf_file_read(mxfFile, buffer, (uint32_t)len) == len);
                         CHK_ORET(send_frame(reader, listener, trackIndex, buffer, len));
                     }
                     else

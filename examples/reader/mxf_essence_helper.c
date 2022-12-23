@@ -40,6 +40,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include "mxf_reader_int.h"
 #include "mxf_essence_helper.h"
@@ -988,6 +989,9 @@ int read_frame(MXFReader *reader, MXFReaderListener *listener, int trackIndex,
     uint8_t *newBuffer = NULL;
     uint64_t newBufferSize;
 
+    /* The implementation below only supports a 32-bit frame size */
+    CHK_ORET(frameSize <= UINT32_MAX);
+
     CHK_ORET((essenceTrack = get_essence_track(reader->essenceReader, trackIndex)) != NULL);
 
     if (essenceTrack->imageStartOffset != 0)
@@ -1002,27 +1006,27 @@ int read_frame(MXFReader *reader, MXFReaderListener *listener, int trackIndex,
         if (reader->buffer == NULL || reader->bufferSize < frameSize)
         {
             SAFE_FREE(reader->buffer);
-            CHK_MALLOC_ARRAY_ORET(reader->buffer, uint8_t, frameSize);
+            CHK_MALLOC_ARRAY_ORET(reader->buffer, uint8_t, (size_t)frameSize);
         }
 
         /* read frame with padding into internal buffer */
-        CHK_OFAIL(mxf_file_read(mxfFile, reader->buffer, frameSize) == frameSize);
+        CHK_OFAIL(mxf_file_read(mxfFile, reader->buffer, (uint32_t)frameSize) == frameSize);
 
         /* get client to allocate a buffer to contain just the image data */
         newBufferSize = frameSize - essenceTrack->imageStartOffset;
-        CHK_OFAIL(listener->allocate_buffer(listener, trackIndex, &newBuffer, newBufferSize));
+        CHK_OFAIL(listener->allocate_buffer(listener, trackIndex, &newBuffer, (uint32_t)newBufferSize));
 
         /* copy image data to the client buffer */
-        CHK_OFAIL(memcpy(newBuffer, &reader->buffer[essenceTrack->imageStartOffset], newBufferSize));
+        CHK_OFAIL(memcpy(newBuffer, &reader->buffer[essenceTrack->imageStartOffset], (size_t)newBufferSize));
     }
     else
     {
         /* get client to allocate a buffer */
         newBufferSize = frameSize;
-        CHK_OFAIL(listener->allocate_buffer(listener, trackIndex, &newBuffer, newBufferSize));
+        CHK_OFAIL(listener->allocate_buffer(listener, trackIndex, &newBuffer, (uint32_t)newBufferSize));
 
         /* read data into the client's buffer */
-        CHK_OFAIL(mxf_file_read(mxfFile, newBuffer, newBufferSize) == newBufferSize);
+        CHK_OFAIL(mxf_file_read(mxfFile, newBuffer, (uint32_t)newBufferSize) == newBufferSize);
     }
 
     *bufferSize = newBufferSize;
@@ -1041,6 +1045,9 @@ int send_frame(MXFReader *reader, MXFReaderListener *listener, int trackIndex,
     EssenceTrack *essenceTrack;
     uint64_t newDataLen;
 
+    /* The implementation below only supports a 32-bit frame size */
+    CHK_ORET(dataLen <= UINT32_MAX);
+
     CHK_ORET((track = get_mxf_track(reader, trackIndex)) != NULL);
     CHK_ORET((essenceTrack = get_essence_track(reader->essenceReader, trackIndex)) != NULL);
 
@@ -1050,11 +1057,15 @@ int send_frame(MXFReader *reader, MXFReaderListener *listener, int trackIndex,
     {
         CHK_ORET(convert_aes_to_pcm(track->audio.channelCount, track->audio.bitsPerSample,
             buffer, dataLen, &newDataLen));
-        CHK_ORET(listener->receive_frame(listener, trackIndex, buffer, newDataLen));
+
+        /* receive_frame only supports a 32-bit frame size */
+        CHK_ORET(newDataLen <= UINT32_MAX);
+
+        CHK_ORET(listener->receive_frame(listener, trackIndex, buffer, (uint32_t)newDataLen));
     }
     else
     {
-        CHK_ORET(listener->receive_frame(listener, trackIndex, buffer, dataLen));
+        CHK_ORET(listener->receive_frame(listener, trackIndex, buffer, (uint32_t)dataLen));
     }
 
     return 1;

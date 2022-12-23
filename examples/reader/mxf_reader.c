@@ -325,18 +325,18 @@ static void offset_to_timecode(mxfPosition offset_in, uint16_t roundedTCBase, in
         offset += info.maxOffset;
 
     timecode->isDropFrame = (info.dropCount > 0);
-    timecode->hour = (int16_t)(offset / info.framesPerHour);
+    timecode->hour = (uint8_t)(offset / info.framesPerHour);
     offset = offset % info.framesPerHour;
-    timecode->min = (int16_t)(offset / info.framesPer10Min * 10);
+    timecode->min = (uint8_t)(offset / info.framesPer10Min * 10);
     offset = offset % info.framesPer10Min;
     if (offset >= info.nonDropFramesPerMin) {
         offset -= info.nonDropFramesPerMin;
-        timecode->min += (int16_t)((offset / info.framesPerMin) + 1);
+        timecode->min += (uint8_t)((offset / info.framesPerMin) + 1);
         offset = offset % info.framesPerMin;
         frames_dropped = timecode->isDropFrame;
     }
-    timecode->sec = (int16_t)(offset / roundedTCBase);
-    timecode->frame = (int16_t)(offset % roundedTCBase);
+    timecode->sec = (uint8_t)(offset / roundedTCBase);
+    timecode->frame = (uint8_t)(offset % roundedTCBase);
 
     if (frames_dropped) {
         timecode->frame += info.dropCount;
@@ -971,7 +971,7 @@ int get_num_source_timecodes(MXFReader *reader)
                 "MXF file is not seekable and first frame has not been read" LOG_LOC_FORMAT, LOG_LOC_PARAMS);
         }
     }
-    return mxf_get_list_length(&reader->sourceTimecodeIndexes);
+    return (int)mxf_get_list_length(&reader->sourceTimecodeIndexes);
 }
 
 int get_source_timecode_type(MXFReader *reader, int index)
@@ -1621,8 +1621,8 @@ int initialise_source_timecodes(MXFReader *reader, MXFMetadataSet *sourcePackage
             timecodeIndexRef->count = 1;
 
             /* convert start position to referenced source start position */
-            toStartPosition = fromStartPosition * toEditRate.numerator * fromEditRate.denominator /
-                (float)(toEditRate.denominator * fromEditRate.numerator) + 0.5;
+            toStartPosition = (int64_t)(fromStartPosition * toEditRate.numerator * fromEditRate.denominator /
+                (float)(toEditRate.denominator * fromEditRate.numerator) + 0.5);
 
             /* modify the timecode index with the file source package's start timecode */
             CHK_OFAIL(convert_position_to_timecode(timecodeIndexRef, toStartPosition, &timecode));
