@@ -21,65 +21,49 @@ A number of applications and library code can be found in the [examples](./examp
 * [writeaviddv50](./examples/writeaviddv50): example utility for writing DV 50 MBit/s video in Avid MXF OP-Atom files.
 * [writeavidmxf](./examples/writeavidmxf): library code and utility for writing Avid MXF OP-Atom files. This utility has been superseded by `raw2bmx` in the [bmx](https://github.com/bbc/bmx) project.
 
-## Build and Installation
+## Build, Test and Install
 
-libMXF is developed on Ubuntu Linux but is supported on other Unix-like systems using the autotools build system. A set of Microsoft Visual C++ project files are provided for Windows.
+libMXF is developed on Ubuntu Linux but is supported on other Unix-like systems and Windows.
+
+The [cmake](https://cmake.org/) build system is used and version >= **3.12** is required. The build process has been tested on 32- and 64-bit versions of Ubuntu, Debian and Windows (Microsoft Visual C++ 2017 (updated) and later versions).
 
 ### Dependencies
 
-The following libraries must be installed to build libMXF. The (Ubuntu) debian package names and versions are shown in brackets.
+The uuid library (Ubuntu / Debian package name `uuid-dev`) is required for non-Apple Unix-like systems.
 
-* uuid, Unix-like systems only (uuid-dev)
+### Commands
 
-### Unix-like Systems Build
+A basic commandline process is described here for platforms that default to the Unix Makefiles or Visual Studio cmake generators. See [./docs/build.md](./docs/build.md) for more detailed build options.
 
-Install the development versions of the dependency libraries. The libMXF library and example applications can then be built from source using autotools as follows,
+Replace `<build type>` in the commandlines below with `Debug` or `Release`. Note that the Visual Studio generator supports multiple build types for a configuration, which is why the build type is selected _after_ configuration.
 
-```bash
-./autogen.sh
-./configure
-make
-```
+The default generator can be overridden using the cmake `-G` option. The list of available generators is shown at the end of the output of `cmake --help`.
 
-Run
+Start by creating a build directory and change into it. The commandlines below use a `out/build` build directory in the working tree, which follows the approach taken by Microsoft Visual Studio C++.
+
+#### Unix-like (Unix Makefiles)
 
 ```bash
-./configure -h
-```
-
-to see a list of build configuration options.
-
-A number of `--disable-*` options are provided for disabling all examples (`--disable-examples`) or specific ones (e.g. `--disable-writeavidmxf`). The `--disable-examples` option can be combined with `--enable-*` options to enable specific examples. The bmx project does not require the examples and therefore libMXF can be configured using `--disable-examples`.
-
-There are a number of core library and example regression tests that can be run using
-
-```bash
-make check
-```
-
-Finally, the core library and examples can be installed using
-
-```bash
+cmake ../../ -DCMAKE_BUILD_TYPE=<build type>
+cmake --build .
+make test
 sudo make install
 ```
 
-To avoid library link errors similar to "error while loading shared libraries" when building [libMXF++](https://github.com/bbc/libMXFpp) or [bmx](https://github.com/bbc/bmx) run
+Run `ldconfig` to update the runtime linker cache. This avoids library link errors similar to "error while loading shared libraries".
 
 ```bash
 sudo /sbin/ldconfig
 ```
 
-to update the runtime linker cache after installation.
+#### Windows (Visual Studio)
 
-### Microsoft Visual Studio C++ Build
-
-The Visual Studio 2010 build solution and project files can be found in the [msvc_build/vs10](./msvc_build/vs10) directory. These files can be upgraded to any more recent version when importing into the IDE.
-
-The main build solution file is [libMXF-All.sln](./msvc_build/vs10/libMXF-All.sln). It is used to build the library and example applications.
-
-The build depends on the `mxf_scm_version.h` header file in the root directory to provide the most recent git commit identifier. This file is generated automatically using the [gen_scm_version.sh](./gen_scm_version.sh) script when building using autotools and is included in the source distribution package. You are likely missing this file if you are using the source code directly from the git repository then and will need to create it manually.
-
-The [MXFDump.sln](./msvc_build/vs10/MXFDump.sln) build solution file is used to build the MXFDump text dumper tool.
+```console
+cmake ..\..\
+cmake --build . --config <build type>
+ctest -C <build type>
+cmake --build . --config <build type> --target install
+```
 
 ## Source and Binary Distributions
 
