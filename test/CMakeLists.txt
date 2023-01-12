@@ -17,6 +17,9 @@ foreach(test ${noarg_tests})
     add_executable(${test} ${test}.c)
     target_link_libraries(${test} MXF)
 
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(${test} "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
     add_test(NAME libMXF_${test}
         COMMAND ${command_prefix} $<TARGET_FILE:${test}>
     )
@@ -30,6 +33,9 @@ set(tests_with_output
 foreach(test ${tests_with_output})
     add_executable(${test} ${test}.c)
     target_link_libraries(${test} MXF)
+
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(${test} "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
     add_test(NAME libMXF_${test}
         COMMAND ${command_prefix} $<TARGET_FILE:${test}> ${test}.mxf
@@ -48,6 +54,9 @@ set(test_checksums
 foreach(test ${test_checksums})
     add_executable(${test} ${test}.c)
     target_link_libraries(${test} MXF)
+
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(${test} "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
     set(test_name libMXF_${test})
     set(args
@@ -86,12 +95,19 @@ endforeach()
 # Run test_file using a shell session with stdin and stdout
 add_executable(test_file test_file.c)
 target_link_libraries(test_file MXF)
+
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(test_file "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 if (WIN32)
     # Run run_test_file.bat via a C-executable to workaround cmake "COMMAND cmd /C ..." not working
     # because cmake 3.20 insists on quoting the '/C'.
     add_executable(win32_cmd_test_file
         win32_cmd_test_file.c
     )
+
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(win32_cmd_test_file "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
     add_test(NAME libMXF_test_file
         COMMAND $<TARGET_FILE:win32_cmd_test_file> ${CMAKE_CURRENT_SOURCE_DIR}/run_test_file.bat $<TARGET_FILE:test_file> test_file.mxf

@@ -28,6 +28,9 @@ set_target_properties(writearchivemxf PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(writearchivemxf "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 install(TARGETS writearchivemxf
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
@@ -42,3 +45,6 @@ target_link_libraries(update_archive_mxf
     writearchivemxf
     MXF
 )
+
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(update_archive_mxf "${CMAKE_CURRENT_LIST_DIR}" "libMXF")

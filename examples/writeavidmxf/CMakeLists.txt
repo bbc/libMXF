@@ -24,6 +24,9 @@ set_target_properties(writeavidmxf PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(writeavidmxf "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 # Only install if build is enabled, and not only for testing avidmxfinfo & reader
 if(LIBMXF_BUILD_EXAMPLES OR LIBMXF_BUILD_WRITEAVIDMXF)
     install(TARGETS writeavidmxf
@@ -48,6 +51,10 @@ set_target_properties(writeavidmxf-bin PROPERTIES
     OUTPUT_NAME writeavidmxf
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(writeavidmxf-bin "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
+
 # Only install if build is enabled, and not only for testing avidmxfinfo & reader
 if(LIBMXF_BUILD_EXAMPLES OR LIBMXF_BUILD_WRITEAVIDMXF)
     install(TARGETS writeavidmxf-bin DESTINATION bin)
@@ -58,6 +65,9 @@ if(LIBMXF_BUILD_TESTING AND (NOT DEFINED BUILD_TESTING OR BUILD_TESTING))
     add_executable(writeavidmxf_create_test_essence
         create_test_essence.c
     )
+
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(writeavidmxf_create_test_essence "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
     set(tests_25
         IMX30 IMX40 IMX50

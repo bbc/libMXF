@@ -118,6 +118,9 @@ set_target_properties(MXF PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(MXF "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 install(TARGETS MXF
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib

@@ -4,6 +4,9 @@ target_link_libraries(test_timecode_index
     MXF
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(test_timecode_index "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 add_executable(test_write_archive_mxf test_write_archive_mxf.c)
 target_link_libraries(test_write_archive_mxf
     writearchivemxf
@@ -15,6 +18,8 @@ if(NOT MSVC)
         m
     )
 endif()
+
+set_source_filename(test_write_archive_mxf "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
 
 # Add custom targets for creating samples and test data

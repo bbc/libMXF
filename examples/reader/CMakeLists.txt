@@ -26,6 +26,9 @@ set_target_properties(mxfreader PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(mxfreader "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 install(TARGETS mxfreader
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
@@ -41,6 +44,9 @@ if(LIBMXF_BUILD_TESTING AND (NOT DEFINED BUILD_TESTING OR BUILD_TESTING))
         mxfreader
         MXF
     )
+
+    include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+    set_source_filename(test_mxf_reader "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
 
 
     if(LIBMXF_TEST_WITH_VALGRIND)

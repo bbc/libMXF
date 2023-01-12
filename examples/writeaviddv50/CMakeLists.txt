@@ -6,6 +6,9 @@ target_link_libraries(writeaviddv50
     MXF
 )
 
+include("${PROJECT_SOURCE_DIR}/cmake/source_filename.cmake")
+set_source_filename(writeaviddv50 "${CMAKE_CURRENT_LIST_DIR}" "libMXF")
+
 
 # Add custom targets for creating samples and test data
 add_custom_target(libMXF_test_writeaviddv50_samples)
