@@ -36,6 +36,8 @@
 #endif
 
 #include <string.h>
+#include <stdio.h>
+#include <limits.h>
 
 #include <mxf/mxf.h>
 #include <mxf/mxf_utils.h>
@@ -49,12 +51,6 @@
 #define WSTR(s)     LPREF(s)
 
 
-
-static mxfProductVersion g_libmxfVersion = {LIBMXF_VERSION_MAJOR,     /* major */
-                                            LIBMXF_VERSION_MINOR,     /* minor */
-                                            LIBMXF_VERSION_MICRO,     /* patch */
-                                            0,                        /* build */
-                                            LIBMXF_VERSION_RELEASE};  /* release */
 
 static mxfProductVersion g_regtestVersion = {1,   /* major */
                                              0,   /* minor */
@@ -107,6 +103,51 @@ mxf_get_scm_version_wstring_func mxf_get_scm_version_wstring    = mxf_default_ge
 
 const mxfProductVersion* mxf_default_get_version(void)
 {
+    static mxfProductVersion g_libmxfVersion = {0};
+
+    if (g_libmxfVersion.major == 0 && g_libmxfVersion.minor == 0) {
+        g_libmxfVersion.major = LIBMXF_VERSION_MAJOR;
+        g_libmxfVersion.minor = LIBMXF_VERSION_MINOR;
+
+        // Set the patch version value to the commit offset from the release tag.
+        // The commit offset is part of the git describe tag string which has the
+        // format "<tag>-<offset>-g<commit id>"
+        const char *describe = git_DescribeTag();
+#ifdef PACKAGE_GIT_VERSION_STRING
+        if (!describe[0] || strcmp(describe, "unknown") == 0)
+            describe = PACKAGE_GIT_VERSION_STRING;
+#endif
+        if (describe[0] && strcmp(describe, "unknown") != 0) {
+            int offset;
+            int dash_count = 0;
+            const char *offset_str = &describe[strlen(describe) - 1];
+
+            // position offset_str after the second '-' in reverse order
+            while (offset_str != describe) {
+                if (*offset_str == '-') {
+                    if (dash_count >= 1) {
+                        offset_str++;
+                        break;
+                    }
+                    dash_count++;
+                }
+                offset_str--;
+            }
+            if (offset_str == describe)
+                offset_str = 0;
+
+            if (offset_str && sscanf(offset_str, "%d", &offset) == 1 && offset >= 0 && offset <= UINT16_MAX) {
+                g_libmxfVersion.patch = (uint16_t)offset;
+                if (git_AnyUncommittedChanges())
+                    g_libmxfVersion.release = 0;  /* Unknown version */
+                else if (offset == 0)
+                    g_libmxfVersion.release = 1;  /* Released version */
+                else
+                    g_libmxfVersion.release = 2;  /* Post release, development version */
+            }
+        }
+    }
+
     return &g_libmxfVersion;
 }
 
@@ -124,7 +165,10 @@ const char* mxf_default_get_scm_version_string(void)
 {
     static char version_string[64] = {0};
     if (version_string[0] == 0) {
-        const char *describe = git_Describe();
+        const char *describe = git_DescribeTag();
+        if (!describe[0] || strcmp(describe, "unknown") == 0)
+            describe = git_Describe();
+
 #ifdef PACKAGE_GIT_VERSION_STRING
         if (strcmp(describe, "unknown") == 0) {
             mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s", PACKAGE_GIT_VERSION_STRING);
