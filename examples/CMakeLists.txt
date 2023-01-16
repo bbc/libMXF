@@ -14,7 +14,7 @@ if(LIBMXF_BUILD_EXAMPLES OR LIBMXF_BUILD_TRANSFERTOP2)
     add_subdirectory(transfertop2)
 endif()
 
-if(LIBMXF_BUILD_EXAMPLES OR BUILD_WRITEAVIDDV50)
+if(LIBMXF_BUILD_EXAMPLES OR LIBMXF_BUILD_WRITEAVIDDV50)
     add_subdirectory(writeaviddv50)
 endif()
 

@@ -17,6 +17,9 @@ option(LIBMXF_BUILD_READER "Build the reader example" OFF)
 # Option to build the transfertop2 example
 option(LIBMXF_BUILD_TRANSFERTOP2 "Build the transfertop2 example" OFF)
 
+# Option to build the writeaviddv50 example
+option(LIBMXF_BUILD_WRITEAVIDDV50 "Build the writeaviddv50 example" OFF)
+
 # Option to build the writeavidmxf example
 option(LIBMXF_BUILD_WRITEAVIDMXF "Build the writeavidmxf example" OFF)
 
