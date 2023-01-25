@@ -41,22 +41,6 @@ extern "C"
 #endif
 
 
-#define LIBMXF_VERSION_MAJOR    1
-#define LIBMXF_VERSION_MINOR    0
-#define LIBMXF_VERSION_MICRO    3
-#define LIBMXF_VERSION_RELEASE  2   /* 0 = Unknown version
-                                       1 = Released version
-                                       2 = Development version
-                                       3 = Released version with patches
-                                       4 = Pre-release beta version
-                                       5 = Private version not intended for general release */
-
-#define LIBMXF_VERSION          (LIBMXF_VERSION_MAJOR << 16 | LIBMXF_VERSION_MINOR << 8 | LIBMXF_VERSION_MICRO)
-
-#define LIBMXF_LIBRARY_NAME     "libMXF"
-#define LIBMXF_LIBRARY_WNAME   L"libMXF"
-
-
 typedef const mxfProductVersion* (*mxf_get_version_func)(void);
 typedef const char* (*mxf_get_platform_string_func)(void);
 typedef const mxfUTF16Char* (*mxf_get_platform_wstring_func)(void);

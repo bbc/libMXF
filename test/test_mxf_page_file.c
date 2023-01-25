@@ -53,7 +53,7 @@ static const char *g_testFile = "pagetest___%d.mxf";
 #define CHECK(cmd) \
     if (!(cmd)) \
     { \
-        fprintf(stderr, "'%s' failed in %s:%d\n", #cmd, __FILE__, __LINE__); \
+        fprintf(stderr, "'%s' failed in %s:%d\n", #cmd, __FILENAME__, __LINE__); \
         exit(1); \
     }
 

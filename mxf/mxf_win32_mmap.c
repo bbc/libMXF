@@ -175,7 +175,7 @@ static BOOL mxf_win32_mmap_MapViewOfFile(MXFFileSysData *sysData)
     return sysData->pData != NULL;
 
 fail:
-    mxf_win32_log_errorId(GetLastError(), __FILE__, __LINE__);
+    mxf_win32_log_errorId(GetLastError(), __FILENAME__, __LINE__);
     return FALSE;
 }
 
@@ -253,7 +253,7 @@ static int mxf_win32_mmap_seek(MXFFileSysData *sysData, int64_t offset, int when
     return TRUE;
 
 fail:
-    mxf_win32_log_errorId(GetLastError(), __FILE__, __LINE__);
+    mxf_win32_log_errorId(GetLastError(), __FILENAME__, __LINE__);
     return FALSE;
 }
 
@@ -457,7 +457,7 @@ static int mxf_win32_mmap_open(const TCHAR *filename, int flags, OpenMode mode, 
     return 1;
 
 fail:
-    mxf_win32_log_errorId(GetLastError(), __FILE__, __LINE__);
+    mxf_win32_log_errorId(GetLastError(), __FILENAME__, __LINE__);
     if (newDiskFile)
     {
         if (newDiskFile->pData)

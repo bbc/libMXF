@@ -47,20 +47,20 @@ extern "C"
 *   ...OFAIL - check succeeds, otherwise goto fail
 */
 
-#define CHK_ORET(cmd)                                                            \
-    do {                                                                         \
-        if (!(cmd)) {                                                            \
-            mxf_log_error("'%s' failed, in %s:%d\n", #cmd, __FILE__, __LINE__);  \
-            return 0;                                                            \
-        }                                                                        \
+#define CHK_ORET(cmd)                                                                \
+    do {                                                                             \
+        if (!(cmd)) {                                                                \
+            mxf_log_error("'%s' failed, in %s:%d\n", #cmd, __FILENAME__, __LINE__);  \
+            return 0;                                                                \
+        }                                                                            \
     } while (0)
 
-#define CHK_OFAIL(cmd)                                                           \
-    do {                                                                         \
-        if (!(cmd)) {                                                            \
-            mxf_log_error("'%s' failed, in %s:%d\n", #cmd, __FILE__, __LINE__);  \
-            goto fail;                                                           \
-        }                                                                        \
+#define CHK_OFAIL(cmd)                                                               \
+    do {                                                                             \
+        if (!(cmd)) {                                                                \
+            mxf_log_error("'%s' failed, in %s:%d\n", #cmd, __FILENAME__, __LINE__);  \
+            goto fail;                                                               \
+        }                                                                            \
     } while (0)
 
 #define CHK_MALLOC_ORET(var, type) \
@@ -93,7 +93,7 @@ extern "C"
 
 /* e.g. mxf_log_error("Some error %d" LOG_LOC_FORMAT, x, LOG_LOC_PARAMS); */
 #define LOG_LOC_FORMAT      ", in %s:%d\n"
-#define LOG_LOC_PARAMS      __FILE__, __LINE__
+#define LOG_LOC_PARAMS      __FILENAME__, __LINE__
 
 
 

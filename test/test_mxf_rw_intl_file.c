@@ -52,7 +52,7 @@
 #define CHECK(cmd) \
     if (!(cmd)) \
     { \
-        fprintf(stderr, "'%s' failed in %s:%d\n", #cmd, __FILE__, __LINE__); \
+        fprintf(stderr, "'%s' failed in %s:%d\n", #cmd, __FILENAME__, __LINE__); \
         exit(1); \
     }
 
@@ -94,6 +94,7 @@ int main()
     mxf_file_close(&writer);
     mxf_free_rw_intl(&interleaver);
 
+    free(readerData);
     free(data);
 
     return 0;

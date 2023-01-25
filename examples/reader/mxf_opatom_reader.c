@@ -129,7 +129,7 @@ static uint64_t get_audio_file_offset(EssenceReaderData *data, EssenceTrack *ess
     }
 }
 
-static uint32_t get_audio_frame_size(EssenceTrack *essenceTrack, int64_t frameNumber)
+static int64_t get_audio_frame_size(EssenceTrack *essenceTrack, int64_t frameNumber)
 {
     if (essenceTrack->frameSize == 0)
     {
