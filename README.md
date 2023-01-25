@@ -25,7 +25,9 @@ A number of applications and library code can be found in the [examples](./examp
 
 libMXF is developed on Ubuntu Linux but is supported on other Unix-like systems and Windows.
 
-The [cmake](https://cmake.org/) build system is used and version >= **3.12** is required. The build process has been tested on 32- and 64-bit versions of Ubuntu, Debian and Windows (Microsoft Visual C++ 2017 (updated) and later versions).
+The [cmake](https://cmake.org/) build system is used, with minimum version **3.12**. The build requires the `git` tool along with the C/C++ compilers.
+
+The build process has been tested on 32- and 64-bit versions of Ubuntu, Debian and Windows (Microsoft Visual C++ 2017 v15.9.51 and later versions).
 
 ### Dependencies
 
@@ -44,6 +46,8 @@ Start by creating a build directory and change into it. The commandlines below u
 #### Unix-like (Unix Makefiles)
 
 ```bash
+mkdir -p out/build
+cd out/build
 cmake ../../ -DCMAKE_BUILD_TYPE=<build type>
 cmake --build .
 make test
@@ -59,6 +63,8 @@ sudo /sbin/ldconfig
 #### Windows (Visual Studio)
 
 ```console
+mkdir out\build
+cd out\build
 cmake ..\..\
 cmake --build . --config <build type>
 ctest -C <build type>
