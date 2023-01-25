@@ -73,7 +73,7 @@ cmake --build . --config <build type> --target install
 
 ## Source and Binary Distributions
 
-Source distributions and Windows binaries are made [available on SourceForge](https://sourceforge.net/projects/bmxlib/files/).
+Source distributions, including dependencies for the Windows build, and Windows binaries are made available as in [bmx](https://github.com/bbc/bmx).
 
 ## License
 
