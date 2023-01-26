@@ -6,7 +6,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.15.0)
 endif()
 
 project(libMXF
-    VERSION 1.0
+    VERSION 1.1
     DESCRIPTION "Low-level C library for reading and writing the SMPTE ST 377-1 MXF file format"
     HOMEPAGE_URL https://github.com/bbc/libMXF
     LANGUAGES C CXX
