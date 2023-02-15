@@ -112,7 +112,7 @@ const mxfProductVersion* mxf_default_get_version(void)
         // Set the patch version value to the commit offset from the release tag.
         // The commit offset is part of the git describe tag string which has the
         // format "<tag>-<offset>-g<commit id>"
-        const char *describe = git_DescribeTag();
+        const char *describe = libmxf_git_DescribeTag();
 #ifdef PACKAGE_GIT_VERSION_STRING
         if (!describe[0] || strcmp(describe, "unknown") == 0)
             describe = PACKAGE_GIT_VERSION_STRING;
@@ -138,7 +138,7 @@ const mxfProductVersion* mxf_default_get_version(void)
 
             if (offset_str && sscanf(offset_str, "%d", &offset) == 1 && offset >= 0 && offset <= UINT16_MAX) {
                 g_libmxfVersion.patch = (uint16_t)offset;
-                if (git_AnyUncommittedChanges())
+                if (libmxf_git_AnyUncommittedChanges())
                     g_libmxfVersion.release = 0;  /* Unknown version */
                 else if (offset == 0)
                     g_libmxfVersion.release = 1;  /* Released version */
@@ -165,9 +165,9 @@ const char* mxf_default_get_scm_version_string(void)
 {
     static char version_string[64] = {0};
     if (version_string[0] == 0) {
-        const char *describe = git_DescribeTag();
+        const char *describe = libmxf_git_DescribeTag();
         if (!describe[0] || strcmp(describe, "unknown") == 0)
-            describe = git_Describe();
+            describe = libmxf_git_Describe();
 
 #ifdef PACKAGE_GIT_VERSION_STRING
         if (strcmp(describe, "unknown") == 0) {
@@ -176,7 +176,7 @@ const char* mxf_default_get_scm_version_string(void)
         else
 #endif
         {
-            if (git_AnyUncommittedChanges())
+            if (libmxf_git_AnyUncommittedChanges())
                 mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s-dirty", describe);
             else
                 mxf_snprintf(version_string, ARRAY_SIZE(version_string), "%s", describe);
