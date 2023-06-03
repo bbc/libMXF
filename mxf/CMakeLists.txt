@@ -109,9 +109,11 @@ target_link_libraries(MXF PRIVATE
 
 # Add the git version tracking library code
 include("${PROJECT_SOURCE_DIR}/cmake/git_version.cmake")
-target_link_libraries(MXF PRIVATE
-    libmxf_git_version
-)
+target_link_libraries(MXF PRIVATE libmxf_git_version)
+if(NOT BUILD_SHARED_LIBS)
+    # Add the libmxf_git_version object files to the static MXF library
+    target_sources(MXF PRIVATE $<TARGET_OBJECTS:libmxf_git_version>)
+endif()
 
 set_target_properties(MXF PROPERTIES
     VERSION ${PROJECT_VERSION}
