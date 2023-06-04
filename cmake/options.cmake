@@ -1,3 +1,6 @@
+# Option to only build the library
+option(LIBMXF_BUILD_LIB_ONLY "Build MXF library only" OFF)
+
 # Option to build testing
 # This option is ignored if BUILD_TESTING is defined and falsy
 option(LIBMXF_BUILD_TESTING "Build libMXF testing" ON)
