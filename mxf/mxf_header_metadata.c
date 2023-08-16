@@ -2079,6 +2079,24 @@ int mxf_set_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKe
     SET_VALUE(mxfThreeColorPrimaries_extlen, mxf_set_three_color_primaries);
 }
 
+int mxf_set_video_line_map_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfVideoLineMap *value)
+{
+    MXFMetadataItem *newItem = NULL;
+    uint8_t *itemValue = NULL;
+
+    assert(set->headerMetadata != NULL);
+
+    CHK_ORET(get_or_create_set_item(set->headerMetadata, set, itemKey, &newItem));
+    CHK_ORET(mxf_alloc_item_value(newItem, 16, &itemValue));
+
+    mxf_set_array_header(2, 4, itemValue);
+
+    mxf_set_int32(value->first, &itemValue[8]);
+    mxf_set_int32(value->second, &itemValue[12]);
+
+    return 1;
+}
+
 int mxf_alloc_array_item_elements(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t elementLen,
     uint32_t count, uint8_t **elements)
 {
@@ -2497,6 +2515,19 @@ int mxf_get_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfCo
 int mxf_get_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfThreeColorPrimaries *value)
 {
     GET_VALUE(mxfThreeColorPrimaries_extlen, mxf_get_three_color_primaries);
+}
+
+int mxf_get_video_line_map_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfVideoLineMap *value)
+{
+    MXFMetadataItem *item = NULL;
+
+    CHK_ORET(mxf_get_item(set, itemKey, &item));
+    CHK_ORET(item->length == 16);
+
+    mxf_get_int32(&item->value[8], &value->first);
+    mxf_get_int32(&item->value[12], &value->second);
+
+    return 1;
 }
 
 int mxf_get_array_item_count(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *count)

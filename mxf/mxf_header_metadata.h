@@ -260,6 +260,7 @@ int mxf_set_rgba_layout_item(MXFMetadataSet *set, const mxfKey *itemKey, const m
 int mxf_set_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfJ2KExtendedCapabilities *value);
 int mxf_set_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfColorPrimary *value);
 int mxf_set_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfThreeColorPrimaries *value);
+int mxf_set_video_line_map_item(MXFMetadataSet *set, const mxfKey *itemKey, const mxfVideoLineMap *value);
 
 int mxf_alloc_array_item_elements(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t elementLen,
                                   uint32_t count, uint8_t **elements);
@@ -309,6 +310,7 @@ int mxf_get_rgba_layout_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfRGBA
 int mxf_get_j2k_ext_capabilities_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfJ2KExtendedCapabilities *value);
 int mxf_get_color_primary_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfColorPrimary *value);
 int mxf_get_three_color_primaries_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfThreeColorPrimaries *value);
+int mxf_get_video_line_map_item(MXFMetadataSet *set, const mxfKey *itemKey, mxfVideoLineMap *value);
 
 int mxf_get_array_item_count(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *count);
 int mxf_get_array_item_element_len(MXFMetadataSet *set, const mxfKey *itemKey, uint32_t *elementLen);

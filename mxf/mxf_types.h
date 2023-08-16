@@ -306,6 +306,12 @@ typedef struct
     mxfColorPrimary primaries[3];
 } mxfThreeColorPrimaries;
 
+typedef struct
+{
+    int32_t first;   /* first line number of first field or FULL_FRAME progressive frame */
+    int32_t second;  /* first line number of second field */
+} mxfVideoLineMap;
+
 
 /* external MXF data lengths */
 #define mxfLocalTag_extlen              2
@@ -351,6 +357,8 @@ static const mxfRational g_Null_Rational = {0, 0};
 
 static const mxfThreeColorPrimaries g_Null_Three_Color_Primaries = {{{0, 0}}};
 static const mxfColorPrimary g_Null_Color_Primary = {0, 0};
+
+static const mxfVideoLineMap g_Null_Video_Line_Map = {0, 0};
 
 
 #ifdef __cplusplus
