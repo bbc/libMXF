@@ -2059,6 +2059,10 @@ MXF_SET_DEFINITION(SubDescriptor, JPEG2000SubDescriptor,
         0
     );
 
+MXF_SET_DEFINITION(SubDescriptor, ContainerConstraintsSubDescriptor,
+    MXF_LABEL(0x06,0x0e,0x2b,0x34,0x02,0x53,0x01,0x01,0x0d,0x01,0x01,0x01,0x01,0x01,0x67,0x00)
+);
+
 
 #if !defined(KEEP_DATA_MODEL_DEFS)
 #undef MXF_BASIC_TYPE_DEF
