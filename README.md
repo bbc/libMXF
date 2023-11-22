@@ -1,3 +1,7 @@
+# ARCHIVED
+
+**This repository has been archived and is no longer maintained. The code has been moved into the [bmx deps/ directory](https://github.com/bbc/bmx/tree/main/deps/libMXF). libMXF can still be built independently from bmx if required.**
+
 # libMXF
 
 libMXF is a low-level C library for reading and writing the [SMPTE ST 377-1 MXF file format](https://ieeexplore.ieee.org/document/7292073).
